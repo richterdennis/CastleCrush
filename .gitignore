@@ -1,3 +1,14 @@
+# Dependency directory
+node_modules
+
+# Editor metadata
+*.sublime-project
+*.sublime-workspace
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
 # Logs
 logs
 *.log
