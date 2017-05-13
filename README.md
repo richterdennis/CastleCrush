@@ -1,3 +1,3 @@
-# CustleCrush
+# CastleCrush
 
 *Description follows soon ...*
