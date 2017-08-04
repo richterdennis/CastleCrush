@@ -1,10 +1,13 @@
-export default class ViewManager {
-  constructor() {
-    this.cache = {};
-  }
+import HomeView from './views/HomeView'
 
-  async load(view) {
-    const html = await fetch(`templates/${view}.html`).then(res => res.text());
-    document.querySelector('main#view').innerHTML = html;
-  }
+export default class ViewManager {
+	constructor(target) {
+		this.target = target;
+
+		this.home = new HomeView();
+	}
+
+	load(viewName) {
+		this[viewName].init().then(view => view.show(this.target));
+	}
 }
