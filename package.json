@@ -1,22 +1,33 @@
 {
   "name": "CastleCrush",
   "version": "1.0.0",
-  "description": "My app description",
+  "description": "A little game to paly together over the network",
   "scripts": {
-    "build": "npm run build:index & npm run build:html & npm run build:css & npm run build:js",
-    "watch": "npm run watch:html & npm run watch:css & npm run watch:js",
-    "build:index": "pug index.pug -o dist",
-    "build:html": "pug templates -o dist/templates",
-    "watch:html": "watch \"npm run build:html\" templates/",
+    "postinstall": "npm run build",
+
+    "start": "npm run dev",
+
+    "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run server\"",
+
+    "server": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080 -o",
+
+    "build": "npm run build:html & npm run build:css & npm run build:js",
+    "build:html": "pug index.pug -o dist & pug templates -o dist/templates",
     "build:css": "lessc less/style.less dist/css/style.css",
-    "watch:css": "watch \"npm run build:css\" less/",
     "build:js": "babel js -d dist/js",
-    "watch:js": "watch \"npm run build:js\" js/"
+
+    "watch": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\"",
+    "watch:html": "nodemon -e pug --ignore dist/ -x \"npm run build:html\"",
+    "watch:css": "nodemon -e less --ignore dist/ -x \"npm run build:css\"",
+    "watch:js": "nodemon -e js --ignore dist/ -x \"npm run build:js\""
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.6.0",
+    "concurrently": "^3.5.0",
     "less": "^2.7.2",
+    "light-server": "^2.2.1",
+    "nodemon": "^1.11.0",
     "pug-cli": "^1.0.0-alpha6",
     "watch": "^1.0.2"
   }
