@@ -1,5 +1,6 @@
 export default class View {
 	constructor() {
+		this.title = null;
 		this.templateUrl = "";
 		this.template = null;
 

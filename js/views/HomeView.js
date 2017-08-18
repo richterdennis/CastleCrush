@@ -4,7 +4,8 @@ export default class HomeView extends View {
 	constructor() {
 		super();
 
-		this.templateUrl = "templates/home";
+		this.title = 'Home';
+		this.templateUrl = 'templates/home';
 	}
 
 	join() {
@@ -12,6 +13,6 @@ export default class HomeView extends View {
 	}
 
 	start() {
-		console.log('start');
+		CustleCrush.ViewManager.load('start');
 	}
 }

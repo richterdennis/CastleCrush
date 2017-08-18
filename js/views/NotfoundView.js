@@ -4,6 +4,7 @@ export default class NotfoundView extends View {
 	constructor() {
 		super();
 
-		this.templateUrl = "templates/404";
+		this.title = '404';
+		this.templateUrl = 'templates/404';
 	}
 }

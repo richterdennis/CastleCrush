@@ -4,6 +4,7 @@ export default class JoinView extends View {
 	constructor() {
 		super();
 
-		this.templateUrl = "templates/join";
+		this.title = 'Join';
+		this.templateUrl = 'templates/join';
 	}
 }
