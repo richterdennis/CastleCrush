@@ -30,6 +30,9 @@ export default class View {
 	}
 
 	show(target) {
-		this._holder.childNodes.forEach(target.appendChild.bind(target));
+		// this._holder.childNodes.forEach(target.appendChild.bind(target));
+		while(this._holder.firstChild) {
+			target.appendChild(this._holder.firstChild);
+		}
 	}
 }

@@ -1,4 +1,5 @@
-import ViewManager from './ViewManager';
+import ViewManager from './views/ViewManager';
 
-const viewManager = new ViewManager(document.querySelector('main#view'));
-viewManager.load('home');
+window.CustleCrush = {};
+
+CustleCrush.ViewManager = new ViewManager(document.querySelector('main#view'));

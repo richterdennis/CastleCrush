@@ -7,11 +7,11 @@ export default class HomeView extends View {
 		this.templateUrl = "templates/home";
 	}
 
-	start() {
-		console.log('start');
+	join() {
+		CustleCrush.ViewManager.load('join');
 	}
 
-	join() {
-		console.log('join');
+	start() {
+		console.log('start');
 	}
 }
