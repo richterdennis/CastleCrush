@@ -11,10 +11,7 @@ export default class ViewManager {
 		this.home = new HomeView();
 		this.join = new JoinView();
 
-		this.notfound = new NotfoundView();
-
-		// Define default view
-		this.DEFAULT_VIEW = 'home';
+		this.not_found = new NotfoundView();
 
 		// Init URL bar and history
 		this.init();
@@ -36,15 +33,22 @@ export default class ViewManager {
 	load(viewName = '', nohistory = false) {
 
 		// Check if view exists
-		if(!this[viewName || this.DEFAULT_VIEW])
-			viewName = 'notfound';
+		if(!this[viewName || CustleCrush.CONST.DEFAULTS.VIEW])
+			viewName = 'not_found';
 
 		// Init the new view (load template etc.)
-		this[viewName || this.DEFAULT_VIEW].init().then(view => {
+		this[viewName || CustleCrush.CONST.DEFAULTS.VIEW].init().then(view => {
+
+			// Create the page title
+			const title = CustleCrush.CONST.PAGE.TITLE
+			  + (view.title ? ` - ${view.title}` : '');
 
 			// Push the new view to the URL and the history
 			if(!nohistory)
-				history.pushState(null, viewName || this.DEFAULT_VIEW, `#/${viewName}`);
+				history.pushState(null, title, `#/${viewName}`);
+
+			// Set the page title
+			document.title = title;
 
 			// Remove the old view
 			while(this.target.firstChild) {
