@@ -5,21 +5,49 @@ export default class ViewManager {
 	constructor(target) {
 		this.target = target;
 
+		// Register all known views
 		this.home = new HomeView();
 		this.join = new JoinView();
 
-		this.load('home');
+		// Define default view
+		this.DEFAULT_VIEW = 'home';
+
+		// Init URL bar and history
+		this.init();
 	}
 
-	load(viewName) {
-		this[viewName].init().then(view => {
+	init() {
+		if(location.hash == '')
+			location.hash = '/';
 
-			// First remove all Childs
+		// Load the view given in the URL
+		this.load(location.hash.substr(2), true);
+
+		// Check history back and forward to load the correct view
+		window.addEventListener('popstate', event => {
+		  this.load(location.hash.substr(2), true);
+		});
+	}
+
+	load(viewName = '', nohistory = false) {
+
+		// Check if view exists
+		if(!this[viewName || this.DEFAULT_VIEW])
+			viewName = 'notfound';
+
+		// Init the new view (load template etc.)
+		this[viewName || this.DEFAULT_VIEW].init().then(view => {
+
+			// Push the new view to the URL and the history
+			if(!nohistory)
+				history.pushState(null, viewName || this.DEFAULT_VIEW, `#/${viewName}`);
+
+			// Remove the old view
 			while(this.target.firstChild) {
 				this.target.removeChild(this.target.firstChild);
 			}
 
-			// Then load the view into it
+			// Load the view
 			view.show(this.target);
 		});
 	}
