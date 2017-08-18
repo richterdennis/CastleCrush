@@ -16,6 +16,8 @@ export default class View {
 		this._holder.innerHTML = this.template;
 		this.registerListener();
 
+		this.afterInit();
+
 		return this;
 	}
 
@@ -36,4 +38,10 @@ export default class View {
 			target.appendChild(this._holder.firstChild);
 		}
 	}
+
+	find(selector) {
+		return this._holder.querySelector(selector);
+	}
+
+	afterInit() {}
 }
