@@ -1,5 +1,6 @@
 import HomeView from './HomeView';
 import JoinView from './JoinView';
+import StartView from './StartView';
 
 import NotfoundView from './NotfoundView';
 
@@ -10,6 +11,7 @@ export default class ViewManager {
 		// Register all known views
 		this.home = new HomeView();
 		this.join = new JoinView();
+		this.start = new StartView();
 
 		this.not_found = new NotfoundView();
 
