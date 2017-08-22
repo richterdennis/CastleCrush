@@ -15,6 +15,6 @@ export default class Game extends Phaser.Game {
 		this.state.add('Stage', StageState, false)
 
 		// Start boot state
-		this.state.start('Boot');
+		this.state.start('Stage');
 	}
 }
