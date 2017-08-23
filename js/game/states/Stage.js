@@ -41,10 +41,12 @@ export default class Stage extends Phaser.State {
 		this.background.height = this.world.height;
 		this.background.width = this.world.width;
 
-		// create a bullet and add physics
+		// create a bullet and add physics to it.
+		// bullet does not exist in game when created. Shooting the bullet will
+		// set it to exist.
 		this.bullet = this.add.sprite(this.world.centerX,this.world.centerY,
 			'bullet');
-		// this.bullet.exists = false;
+		this.bullet.exists = false;
 		this.physics.arcade.enable(this.bullet);
 
 		// create the 'castle'
@@ -54,31 +56,34 @@ export default class Stage extends Phaser.State {
 		// create the cannon
 		this.cannon = this.add.sprite(50, this.castle.y-this.castle.height,
 			'turret');
-		this.cannon.anchor.setTo(0,1);
+		this.cannon.anchor.setTo(0,0.5);
 
 		// DEBUG Create a FPS Counter in the top left corner
-		this.fpsText = this.add.text(8, 8, 'FPS: 0', { font: "18px Arial",
+		this.fpsText = this.add.text(8, 8, 'FPS: 0', { font: "12px Arial",
 			fill: "#ffffff" });
-		this.powerText = this.add.text(8, 30, 'Power: 100', { font: "18px Arial",
+		this.powerText = this.add.text(8, 24, 'Power: 100', { font: "12px Arial",
 			fill: "#ffffff" });
-		this.angleText = this.add.text(8, 52, 'Angle: 10', { font: "18px Arial",
+		this.angleText = this.add.text(8, 40, 'Angle: 10', { font: "12px Arial",
 			fill: "#ffffff" });
 
 		this.power = this.minPower;
-		this.angle = this.minAngle;
+		this.cannon.angle = -this.minAngle;
 	}
 	
 	update() {
+		this.playerInput();
+		this.updateDebugText();
+	}
 
-
+	playerInput() {
 		// TODO: Change to touch controls
 		if (this.input.keyboard.isDown(Phaser.Keyboard.W) && 
-			this.angle < this.maxAngle) {
-			this.angle += 1;
+			this.cannon.angle > -this.maxAngle) {
+			this.cannon.angle -= 1;
 		}
 		else if (this.input.keyboard.isDown(Phaser.Keyboard.S) && 
-			this.angle > this.minAngle) {
-			this.angle -= 1;
+			this.cannon.angle < -this.minAngle) {
+			this.cannon.angle += 1;
 		}
 		if (this.input.keyboard.isDown(Phaser.Keyboard.D) && 
 			this.power < this.maxPower) {
@@ -90,15 +95,30 @@ export default class Stage extends Phaser.State {
 		}
 
 		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			console.log ('FIRE');
+			this.shooting();
 		}
-		
-		this.fps = Math.round(1000/this.time.elapsedMS);
-		this.fpsText.text = 'FPS: ' + this.fps;
+	}
+	updateDebugText() {
+		var fps = Math.round(1000 / this.time.elapsedMS);
+		this.fpsText.text = 'FPS: ' + fps;
 
-		this.powerText.text = 'Power:' + this.power;
-		this.angleText.text = 'Angle:' + this.angle;
+		this.powerText.text = 'Power: ' + this.power;
+		this.angleText.text = 'Angle: ' + -this.cannon.angle;
 	}
 
+	shooting() {
+
+		// return if a bullet exists. Ensures that only a single bullet can exist.
+		if (this.bullet.exists) {
+			//return;
+		}
+		this.bullet.reset(this.cannon.x, this.cannon.y);
+		this.bullet.exists = true;
+
+		var p = new Phaser.Point(this.cannon.x, this.cannon.y);
+		p.rotate(p.x, p.y, this.cannon.rotation, false, this.cannon.width);
+
+		this.physics.arcade.velocityFromRotation(this.cannon.rotation, this.power, this.bullet.body.velocity);
+	}
 	
 }
