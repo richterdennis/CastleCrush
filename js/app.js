@@ -1,16 +1,16 @@
 import EventManager from './EventManager';
 import ViewManager from './views/ViewManager';
 
-window.CustleCrush = {};
+window.CastleCrush = {};
 
-CustleCrush.CONST = {
+CastleCrush.CONST = {
 	PAGE: {
-		TITLE: 'Custle Crush'
+		TITLE: 'Castle Crush'
 	},
 	DEFAULTS: {
 		VIEW: 'home'
 	}
 };
 
-CustleCrush.EventManager = new EventManager();
-CustleCrush.ViewManager = new ViewManager(document.querySelector('main#view'));
+CastleCrush.EventManager = new EventManager();
+CastleCrush.ViewManager = new ViewManager(document.querySelector('main#view'));

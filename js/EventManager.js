@@ -15,7 +15,7 @@ export default class EventManager {
 	 * This function registers a listener for an event
 	 *
 	 * Sample:
-	 *   CustleCrush.EventManager.addEventListener(EVENTS.START_GAME, handler);
+	 *   CastleCrush.EventManager.addEventListener(EVENTS.START_GAME, handler);
 	 *
 	 * @param  {string}    eventType  The event type
 	 * @param  {function}  listener   The listener
@@ -31,7 +31,7 @@ export default class EventManager {
 	 * This function dispatches a event
 	 *
 	 * Sample:
-	 *   CustleCrush.EventManager.dispatch(EVENTS.START_GAME, {});
+	 *   CastleCrush.EventManager.dispatch(EVENTS.START_GAME, {});
 	 *
 	 * @param  {string}  eventType  The event type
 	 * @param  {object}  event      The event

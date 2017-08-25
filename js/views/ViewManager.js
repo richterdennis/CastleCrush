@@ -37,14 +37,14 @@ export default class ViewManager {
 	load(viewName = '', nohistory = false) {
 
 		// Check if view exists
-		if(!this[viewName || CustleCrush.CONST.DEFAULTS.VIEW])
+		if(!this[viewName || CastleCrush.CONST.DEFAULTS.VIEW])
 			viewName = 'not_found';
 
 		// Init the new view (load template etc.)
-		this[viewName || CustleCrush.CONST.DEFAULTS.VIEW].init().then(view => {
+		this[viewName || CastleCrush.CONST.DEFAULTS.VIEW].init().then(view => {
 
 			// Create the page title
-			const title = CustleCrush.CONST.PAGE.TITLE
+			const title = CastleCrush.CONST.PAGE.TITLE
 			  + (view.title ? ` - ${view.title}` : '');
 
 			// Push the new view to the URL and the history
