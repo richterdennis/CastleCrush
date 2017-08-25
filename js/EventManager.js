@@ -1,3 +1,5 @@
+import helper from './helper'
+
 /**
  * This class handles the event listeners and
  * provide a function to dispatch a event
@@ -39,6 +41,10 @@ export default class EventManager {
 	dispatch(eventType, event) {
 		if(!this.listener[eventType])
 			return;
+
+		event.type = eventType;
+		event.uuid = helper.uuid();
+		event.timestamp = Date.now();
 
 		this.listener[eventType].forEach(listener => listener(event));
 	}
