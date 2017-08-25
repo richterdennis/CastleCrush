@@ -162,6 +162,9 @@ export default class Stage extends Phaser.State {
 		} // remove the indicator when the bullet reenters the screen
 		else if (this.arrow.exists) this.arrow.exists = false;
 
+		// Turn bullet towards its velocity's vector
+		this.bullet.rotation = this.bullet.body.angle;
+
 		// Get the rgba value of the land at the bullets current position
 		var x = Math.floor(this.bullet.x / this.landScaling);
 		var y = Math.floor(this.bullet.y / this.landScaling);
