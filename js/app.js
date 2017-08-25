@@ -1,3 +1,4 @@
+import EventManager from './EventManager';
 import ViewManager from './views/ViewManager';
 
 window.CustleCrush = {};
@@ -11,4 +12,5 @@ CustleCrush.CONST = {
 	}
 };
 
+CustleCrush.EventManager = new EventManager();
 CustleCrush.ViewManager = new ViewManager(document.querySelector('main#view'));
