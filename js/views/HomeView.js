@@ -9,10 +9,10 @@ export default class HomeView extends View {
 	}
 
 	join() {
-		CustleCrush.ViewManager.load('join');
+		CastleCrush.ViewManager.load('join');
 	}
 
 	start() {
-		CustleCrush.ViewManager.load('start');
+		CastleCrush.ViewManager.load('start');
 	}
 }
