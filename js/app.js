@@ -1,4 +1,5 @@
 import EventManager from './EventManager';
+import NetworkManager from './NetworkManager';
 import ViewManager from './views/ViewManager';
 
 window.CastleCrush = {};
@@ -13,4 +14,5 @@ CastleCrush.CONST = {
 };
 
 CastleCrush.EventManager = new EventManager();
+CastleCrush.NetworkManager = new NetworkManager();
 CastleCrush.ViewManager = new ViewManager(document.querySelector('main#view'));

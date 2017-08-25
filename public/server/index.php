@@ -5,15 +5,6 @@ define('SOCKET_PORT', 9194);
 // Include the beautiful SocketServer class
 include 'SocketServer.class.php';
 
-// Tell the client that the server starts and close the HTTP connection
-ob_start();
-echo 'Server is running...';
-header('Connection: close');
-header('Content-Length: '.ob_get_length());
-ob_end_flush();
-ob_flush();
-flush();
-
 // This is a room array to hold the clients in rooms
 $rooms = array();
 
@@ -22,6 +13,7 @@ $socketServer = new SocketServer(SOCKET_PORT);
 
 // Get the message from the client and send it to all room mates
 $socketServer->onmessage(function($encMessage, $client, $server) {
+	$socketServer->refreshSocketDieTime();
 	$decMessage = json_decode($encMessage, true);
 
 	switch($decMessage->type) {
@@ -56,4 +48,15 @@ $socketServer->ondisconnect(function($client, $server) {
 	}
 });
 
+// Tell the client that the server starts and close the HTTP connection
+ob_start();
+header('Access-Control-Allow-Origin: *');
+echo 'Server is running...';
+header('Connection: close');
+header('Content-Length: '.ob_get_length());
+ob_end_flush();
+ob_flush();
+flush();
+
+// Then start the server
 $socketServer->start();

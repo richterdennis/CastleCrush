@@ -49,9 +49,10 @@ class SocketServer {
 	/**
 	 * This constructs the SocketServer
 	 *
-	 * @param  [number]  $port  The server port
+	 * @param  [number]  $port           The server port
+	 * @param  [number]  $maxSocketLive  The maximum socket live time in seconds
 	 */
-	public function __construct($port) {
+	public function __construct($port, $maxSocketLive = 600) {
 		// Create TCP/IP stream socket
 		$this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		socket_set_option($this->socket, SOL_SOCKET, SO_REUSEADDR, 1);
@@ -60,6 +61,7 @@ class SocketServer {
 		socket_bind($this->socket, 0, $port);
 		socket_listen($this->socket);
 
+		$this->maxSocketLive = $maxSocketLive;
 		$this->state = 'born';
 		$this->clients = array();
 		$this->connectListener = array();
@@ -89,20 +91,32 @@ class SocketServer {
 			$this->disconnectListener[] = $ondisconnect;
 
 		// handling for maximum time, socket is open
-		$maxSocketLive = 1*60*60; // 1 hour
-		$socketDieTime = time() + $maxSocketLive;
+		$this->socketDieTime = time() + $this->maxSocketLive;
 		$this->state = 'alive';
 
 		// override max execution time from php.ini
-		set_time_limit($maxSocketLive);
+		set_time_limit($this->maxSocketLive);
 
-		while($this->state == 'alive' && time() < $socketDieTime) {
+		while($this->state == 'alive' && time() < $this->socketDieTime) {
 			$this->checkIsNewClient();
 			$this->checkMsgOrDisconnect();
 		}
 
 		socket_close($this->socket);
 		$this->state = 'dead';
+	}
+
+	/**
+	 * This refreshes the maximum socket live and resets the stop timer
+	 *
+	 * @param  [number]  $maxSocketLive  The maximum socket live time in seconds
+	 */
+	public function refreshSocketDieTime($maxSocketLive = null) {
+		if($maxSocketLive == null)
+			$maxSocketLive = $this->maxSocketLive;
+
+		$this->socketDieTime = time() + $maxSocketLive;
+		set_time_limit($maxSocketLive);
 	}
 
 	/**
@@ -226,7 +240,8 @@ class SocketServer {
 		if(count($sockets) < 1)
 			return array();
 
-		socket_select($sockets, $w = null, $e = null, 0, 10);
+		$w = $e = null;
+		socket_select($sockets, $w, $e, 0, 10);
 		return $sockets;
 	}
 
