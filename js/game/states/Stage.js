@@ -4,9 +4,11 @@ export default class Stage extends Phaser.State {
 		this.bullet = null;
 		this.castle = null;
 		this.cannon = null;
+		this.land = null;
+		this.arrow = null;
 
 		// Player shooting Power and angle bounds
-		this.minPower = 100;
+		this.minPower = 250;
 		this.maxPower = 1000;
 		this.minAngle = 10;
 		this.maxAngle = 90
@@ -16,7 +18,8 @@ export default class Stage extends Phaser.State {
 
 		// set Arcade physics
 		this.physics.startSystem(Phaser.Physics.ARCADE);
-		this.physics.arcade.gravity.y = 200;
+		this.physics.arcade.gravity.y = 300;
+		this.physics.arcade.gravity.x = -100;
 
 
 		// TODO: figure out a way to set target FPS to 30
@@ -31,6 +34,8 @@ export default class Stage extends Phaser.State {
 		this.load.image('tank', 'public/assets/tanks_tankGrey_body5.png');
 		this.load.image('turret', 'public/assets/tanks_turret3.png');
 		this.load.image('bullet', 'public/assets/tank_bullet2.png');
+		this.load.image('land', 'public/assets/land.png');
+		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
 	}
 
 	create() {
@@ -49,15 +54,6 @@ export default class Stage extends Phaser.State {
 		this.bullet.exists = false;
 		this.physics.arcade.enable(this.bullet);
 
-		// create the 'castle'
-		this.castle = this.add.sprite(50,this.world.height,'tank');
-		this.castle.anchor.setTo(0.5,1);
-
-		// create the cannon
-		this.cannon = this.add.sprite(50, this.castle.y-this.castle.height,
-			'turret');
-		this.cannon.anchor.setTo(0,0.5);
-
 		// DEBUG Create a FPS Counter in the top left corner
 		this.fpsText = this.add.text(8, 8, 'FPS: 0', { font: "12px Arial",
 			fill: "#ffffff" });
@@ -66,13 +62,43 @@ export default class Stage extends Phaser.State {
 		this.angleText = this.add.text(8, 40, 'Angle: 10', { font: "12px Arial",
 			fill: "#ffffff" });
 
+		// Creates land bitmap data, scales it relative to the world size and 
+		// draws it on screen
+		this.land = this.add.bitmapData(1920, 1080);
+		this.land.draw('land');
+		this.land.update()
+		this.land.addToWorld(0,0,0,0, this.world.width/ this.land.width, 
+			this.world.height / this.land.height);
+
+		// create the 'castle'
+		this.castle = this.add.sprite(100,this.world.height - 215,'tank');
+		this.castle.anchor.setTo(0.5, 1);
+
+		// create the cannon
+		this.cannon = this.add.sprite(this.castle.x , this.castle.y-this.castle.height,
+			'turret');
+		this.cannon.anchor.setTo(-0.1, 0);
+
+		// Initialize power and angle values as their minvalues
 		this.power = this.minPower;
 		this.cannon.angle = -this.minAngle;
+
+		this.arrow = this.add.image(0,10, 'arrow')
+		this.arrow.anchor.setTo(1,0.5);
+		this.arrow.width = 0.5 * this.arrow.width;
+		this.arrow.height = 0.5 * this.arrow.height;
+		this.arrow.angle = -90;
+		this.arrow.exists = false;
 	}
 	
 	update() {
 		this.playerInput();
 		this.updateDebugText();
+
+		if (this.bullet.exists) {
+			this.physics.arcade.overlap(this.bullet, this.land, this.hit, null, this);
+			this.bulletVsLand();
+		} 
 	}
 
 	playerInput() {
@@ -97,6 +123,8 @@ export default class Stage extends Phaser.State {
 		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			this.shooting();
 		}
+
+
 	}
 	updateDebugText() {
 		var fps = Math.round(1000 / this.time.elapsedMS);
@@ -110,7 +138,7 @@ export default class Stage extends Phaser.State {
 
 		// return if a bullet exists. Ensures that only a single bullet can exist.
 		if (this.bullet.exists) {
-			//return;
+			return;
 		}
 		this.bullet.reset(this.cannon.x, this.cannon.y);
 		this.bullet.exists = true;
@@ -118,7 +146,29 @@ export default class Stage extends Phaser.State {
 		var p = new Phaser.Point(this.cannon.x, this.cannon.y);
 		p.rotate(p.x, p.y, this.cannon.rotation, false, this.cannon.width);
 
-		this.physics.arcade.velocityFromRotation(this.cannon.rotation, this.power, this.bullet.body.velocity);
+		this.physics.arcade.velocityFromRotation(this.cannon.rotation, this.power,
+			this.bullet.body.velocity);
+	}
+
+	bulletVsLand() {
+		// if bullet flies offscreen destroy it and return out of this function
+		if (this.bullet.x < 0 || this.bullet.x > this.game.world.width 
+			|| this.bullet.y > this.game.height)
+		{
+   		this.removeBullet();
+    		return;
+		} // unless it flies above the sky show arrow to indicate horizontal position
+		else if (this.bullet.y < -10) {
+			this.arrow.exists = true;
+			this.arrow.x = this.bullet.x;
+		} // remove the indicator when the bullet reenters the screen
+		else if (this.arrow.exists) this.arrow.exists = false;
 	}
 	
+	removeBullet() {
+		console.log('bullet removed');
+		this.bullet.exists = false;
+		this.arrow.exists = false;
+	}
+
 }
