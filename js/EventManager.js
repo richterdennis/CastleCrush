@@ -1,3 +1,5 @@
+import helper from './helper'
+
 /**
  * This class handles the event listeners and
  * provide a function to dispatch a event
@@ -40,7 +42,20 @@ export default class EventManager {
 		if(!this.listener[eventType])
 			return;
 
+		event.type = eventType;
+		event.uuid = helper.uuid();
+		event.timestamp = Date.now();
+
 		this.listener[eventType].forEach(listener => listener(event));
+
+		// if([
+		// 	EVENTS.START_ROOM,
+		// 	EVENTS.JOIN_ROOM,
+		// 	EVENTS.LEAVE_ROOM,
+		// 	EVENTS.START_GAME,
+		// 	EVENTS.GAME_ACTION
+		// ].includes(eventType))
+		CastleCrush.NetworkManager.send(event);
 	}
 }
 
@@ -53,9 +68,11 @@ export default class EventManager {
  * @type {Object}
  */
 const EVENTS = {
-	START_ROOM: 'start_room',
-	JOIN_ROOM:  'join_room',
-	START_GAME: 'start_game',
+	START_ROOM:  'start_room',
+	JOIN_ROOM:   'join_room',
+	LEAVE_ROOM:  'leave_room',
+	START_GAME:  'start_game',
+	GAME_ACTION: 'game_action'
 };
 
 export { EventManager, EVENTS };
