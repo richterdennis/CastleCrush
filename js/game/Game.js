@@ -5,11 +5,16 @@ export default class Game extends Phaser.Game {
 	constructor(parentElement) {
 		super(1280, 720, Phaser.AUTO, parentElement);
 
+		this.preload();
+	}
+
+	preload() {
+
 		// Add states
 		this.state.add('Boot', BootState, false);
 		this.state.add('Stage', StageState, false)
 
 		// Start boot state
-		this.state.start('Stage');
+		this.state.start('Boot');
 	}
 }
