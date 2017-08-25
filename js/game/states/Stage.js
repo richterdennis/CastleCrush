@@ -7,6 +7,8 @@ export default class Stage extends Phaser.State {
 		this.land = null;
 		this.arrow = null;
 
+		this.blastRadius = 15;
+
 		// Player shooting Power and angle bounds
 		this.minPower = 250;
 		this.maxPower = 1000;
@@ -20,11 +22,6 @@ export default class Stage extends Phaser.State {
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.physics.arcade.gravity.y = 300;
 		this.physics.arcade.gravity.x = -100;
-
-
-		// TODO: figure out a way to set target FPS to 30
-		this.time.advancedTiming = true;
-		this.time.desiredFps = 30;
 	}
 
 	preload() {
@@ -52,6 +49,7 @@ export default class Stage extends Phaser.State {
 		this.bullet = this.add.sprite(this.world.centerX,this.world.centerY,
 			'bullet');
 		this.bullet.exists = false;
+		this.bullet.anchor.setTo(1,0.5);
 		this.physics.arcade.enable(this.bullet);
 
 		// DEBUG Create a FPS Counter in the top left corner
@@ -66,9 +64,9 @@ export default class Stage extends Phaser.State {
 		// draws it on screen
 		this.land = this.add.bitmapData(1920, 1080);
 		this.land.draw('land');
-		this.land.update()
-		this.land.addToWorld(0,0,0,0, this.world.width/ this.land.width, 
-			this.world.height / this.land.height);
+		this.land.update();
+		this.landScaling = this.world.width/ this.land.width; // assumes 16:9
+		this.land.addToWorld(0,0,0,0, this.landScaling, this.landScaling);
 
 		// create the 'castle'
 		this.castle = this.add.sprite(100,this.world.height - 215,'tank');
@@ -96,7 +94,7 @@ export default class Stage extends Phaser.State {
 		this.updateDebugText();
 
 		if (this.bullet.exists) {
-			this.physics.arcade.overlap(this.bullet, this.land, this.hit, null, this);
+			
 			this.bulletVsLand();
 		} 
 	}
@@ -163,6 +161,23 @@ export default class Stage extends Phaser.State {
 			this.arrow.x = this.bullet.x;
 		} // remove the indicator when the bullet reenters the screen
 		else if (this.arrow.exists) this.arrow.exists = false;
+
+		// Get the rgba value of the land at the bullets current position
+		var x = Math.floor(this.bullet.x / this.landScaling);
+		var y = Math.floor(this.bullet.y / this.landScaling);
+		var alpha = this.land.getPixel(x,y).a;
+
+		// FIXME 
+		if (alpha > 0) {
+			// land is visible
+			console.log('land was hit');
+			this.land.blendDestinationOut();
+			this.land.circle(x,y, 50, 'rgba(0,0,0,255)');
+			this.land.blendReset();
+			this.land.update();
+
+			this.removeBullet();
+		}
 	}
 	
 	removeBullet() {
