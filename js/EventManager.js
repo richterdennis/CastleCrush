@@ -35,27 +35,26 @@ export default class EventManager {
 	 * Sample:
 	 *   CastleCrush.EventManager.dispatch(EVENTS.START_GAME, {});
 	 *
-	 * @param  {string}  eventType  The event type
-	 * @param  {object}  event      The event
+	 * @param  {string}   eventType  The event type
+	 * @param  {object}   event      The event
+	 * @param  {boolean}  doSend     Should the event send over network
 	 */
-	dispatch(eventType, event) {
-		if(!this.listener[eventType])
-			return;
-
+	dispatch(eventType, event, doSend = true) {
 		event.type = eventType;
 		event.uuid = helper.uuid();
 		event.timestamp = Date.now();
 
-		this.listener[eventType].forEach(listener => listener(event));
+		if(this.listener[eventType])
+			this.listener[eventType].forEach(listener => listener(event));
 
-		// if([
-		// 	EVENTS.START_ROOM,
-		// 	EVENTS.JOIN_ROOM,
-		// 	EVENTS.LEAVE_ROOM,
-		// 	EVENTS.START_GAME,
-		// 	EVENTS.GAME_ACTION
-		// ].includes(eventType))
-		CastleCrush.NetworkManager.send(event);
+		if([
+		 	EVENTS.START_ROOM,
+		 	EVENTS.JOIN_ROOM,
+		 	EVENTS.LEAVE_ROOM,
+		 	EVENTS.START_GAME,
+		 	EVENTS.GAME_ACTION
+		].includes(eventType) && doSend)
+			CastleCrush.NetworkManager.send(event);
 	}
 }
 
