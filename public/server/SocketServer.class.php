@@ -309,7 +309,6 @@ class SocketServer {
 	 */
 	private function checkSocket($changedSocket) {
 		$r = socket_recv($changedSocket, $buf, 1024, 0);
-		error_log(print_r($buf, true));
 		if($r === 0 || strpos($buf, "\x88") === 0)
 			return -1;
 

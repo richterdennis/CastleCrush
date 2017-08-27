@@ -28,33 +28,49 @@ export default class NetworkManager {
 	}
 
 	onopen() {
-		console.log('WebSocket Open');
+		console.info('[NETWORK] You are successfully connected to the socket server!');
+		this.state = 'connected';
 	}
 
-  onerror(error) {
-  	if(this.state == 'connecting' && this.connection.readyState === 3) {
-  		console.warn('Server is not running! Attempt to start it');
-  		fetch(CONFIG.SERVER_START_ADDRESS)
-  		  .then(res => res.text())
-  		  .then(res => {
-  		  	console.info('Server says: ', res);
-  		  	console.info('Connecting again!');
-  		  	this.connect();
-  		  })
-  		  .catch(console.error);
-  	}
+	/**
+	 * [onerror description]
+	 *
+	 * @param  {[type]}  error  [description]
+	 */
+	onerror(error) {
+		if(this.state == 'connecting' && this.connection.readyState === 3) {
+			console.warn('[NETWORK] Server is not running! Attempt to start it');
+			fetch(CONFIG.SERVER_START_ADDRESS)
+				.then(res => res.text())
+				.then(res => {
+					console.info('[NETWORK] Server says: ', res);
+					console.info('[NETWORK] Connecting again!');
+					this.connect();
+				})
+				.catch(error => {
+					console.error('[NETWORK] Can not start socket server!');
+					console.error('[NETWORK] Maybe the SERVER_START_ADDRESS is not correct:', CONFIG.SERVER_START_ADDRESS);
+					console.error('[NETWORK] The error is:', error.message);
+					console.error(error);
+				});
+		}
+		else {
+			console.error('[NETWORK] You have a problem with your socket connection!');
+			console.error('[NETWORK] The error is:', error.message);
+			console.error(error);
+		}
+	}
 
-  	else
-			console.log('WebSocket Error: ', error);
-  }
+	onmessage(event) {
+		console.info('[NETWORK] You received a message: ', event.data);
 
-  onmessage(event) {
-  	event = JSON.parse(event.data);
-  	CastleCrush.EventManager.dispatch(event.type, event);
-		console.log('WebSocket Message: ', event);
-  }
+		event = JSON.parse(event.data);
+		CastleCrush.EventManager.dispatch(event.type, event, false);
+	}
 
-  send(data) {
-  	this.connection.send(JSON.stringify(data));
-  }
+	send(data) {
+		console.info('[NETWORK] You are sending a message: ', JSON.stringify(data));
+
+		this.connection.send(JSON.stringify(data));
+	}
 }
