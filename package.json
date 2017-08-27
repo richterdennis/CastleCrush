@@ -4,9 +4,11 @@
   "description": "A little game to paly together over the network",
   "scripts": {
     "postinstall": "npm run build",
-    "start": "npm run dev",
-    "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run server\"",
-    "server": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080 -o",
+    "start": "npm run dev:open",
+    "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run watch:config -s\" \"npm run server\"",
+    "dev:open": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run watch:config -s\" \"npm run server:open\"",
+    "server": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080",
+    "server:open": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080 -o",
 
     "build": "npm run build:html & npm run build:css & npm run build:js & npm run build:public",
     "build:html": "pug index.pug -o dist & pug templates -o dist/templates",
@@ -14,12 +16,14 @@
     "prebuild:js": "mkdirp dist/js",
     "build:js": "browserify js/main.js -o dist/js/main.js -t [ babelify --presets [ env ] --plugins [ syntax-async-functions transform-regenerator ] ]",
     "build:public": "ncp public dist/public",
+    "build:config": "ncp config.js dist/config.js",
 
-    "watch": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\"",
+    "watch": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run watch:config -s\"",
     "watch:html": "nodemon -e pug --ignore dist/ -x \"npm run build:html\"",
     "watch:css": "nodemon -e less --ignore dist/ -x \"npm run build:css\"",
     "watch:js": "nodemon -e js --ignore dist/ -x \"npm run build:js\"",
-    "watch:public": "nodemon --watch public --ignore dist/ -x \"npm run build:public\""
+    "watch:public": "nodemon --watch public --ignore dist/ -x \"npm run build:public\"",
+    "watch:config": "nodemon --watch config.js -x \"npm run build:config\""
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
