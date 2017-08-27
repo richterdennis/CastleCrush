@@ -1,8 +1,3 @@
-// Outsource these config to a config.json
-const CONFIG = {
-	SERVER_START_ADDRESS: 'http://localhost/CastleCrush/dist/public/server/index.php',
-	SOCKET_ADDRESS: 'ws://localhost:9194/'
-};
 
 /**
  * The NetworkManager handles the socket connection and
@@ -20,7 +15,7 @@ export default class NetworkManager {
 	connect() {
 		this.state = 'connecting';
 
-		this.connection = new WebSocket(CONFIG.SOCKET_ADDRESS);
+		this.connection = new WebSocket(CastleCrush.CONFIG.SOCKET_ADDRESS);
 
 		this.connection.onopen = this.onopen.bind(this);
 		this.connection.onerror = this.onerror.bind(this);
@@ -40,7 +35,7 @@ export default class NetworkManager {
 	onerror(error) {
 		if(this.state == 'connecting' && this.connection.readyState === 3) {
 			console.warn('[NETWORK] Server is not running! Attempt to start it');
-			fetch(CONFIG.SERVER_START_ADDRESS)
+			fetch(CastleCrush.CONFIG.SERVER_START_ADDRESS)
 				.then(res => res.text())
 				.then(res => {
 					console.info('[NETWORK] Server says: ', res);
