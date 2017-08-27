@@ -13,18 +13,36 @@ $socketServer = new SocketServer(SOCKET_PORT);
 
 // Get the message from the client and send it to all room mates
 $socketServer->onmessage(function($encMessage, $client, $server) {
-	$socketServer->refreshSocketDieTime();
-	$decMessage = json_decode($encMessage, true);
+	global $rooms;
+
+	$server->refreshSocketDieTime();
+	$decMessage = json_decode($encMessage);
+
+	if(!isset($decMessage->roomid)) {
+		$server->sendMessage('You forgot the roomid!', $client);
+		return;
+	}
 
 	switch($decMessage->type) {
 		case 'start_room':
 			$rooms[$decMessage->roomid] = array();
 
 		case 'join_room':
-			$rooms[$decMessage->roomid][] = $client;
+			if(isset($rooms[$decMessage->roomid]))
+				$rooms[$decMessage->roomid][] = $client;
+
+			else {
+				$server->sendMessage('The room does not exist!', $client);
+				break;
+			}
 
 		default:
-			$server->broadcast($encMessage, $rooms[$decMessage->roomid]);
+			if(isset($rooms[$decMessage->roomid]))
+				$server->broadcast($encMessage, $rooms[$decMessage->roomid]);
+
+			else
+				$server->sendMessage('The room does not exist!', $client);
+
 			break;
 
 		case 'leave_room':
@@ -36,6 +54,8 @@ $socketServer->onmessage(function($encMessage, $client, $server) {
 
 // On disconnection: Remove client from room and inform other mates
 $socketServer->ondisconnect(function($client, $server) {
+	global $rooms;
+
 	foreach ($rooms as $room) {
 		$i = array_search($client, $room);
 		if($i !== false) {
