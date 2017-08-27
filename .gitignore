@@ -1,4 +1,7 @@
-# build folder
+# config file
+config.js
+
+# dist folder
 dist
 
 # Dependency directory
@@ -50,4 +53,5 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
 
