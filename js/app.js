@@ -2,7 +2,7 @@ import EventManager from './EventManager';
 import NetworkManager from './NetworkManager';
 import ViewManager from './views/ViewManager';
 
-window.CastleCrush = {};
+window.CastleCrush = window.CastleCrush || {};
 
 CastleCrush.CONST = {
 	PAGE: {
