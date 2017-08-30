@@ -14,5 +14,8 @@ CastleCrush.CONST = {
 };
 
 CastleCrush.EventManager = new EventManager();
+CastleCrush.ViewManager = new ViewManager();
 CastleCrush.NetworkManager = new NetworkManager();
-CastleCrush.ViewManager = new ViewManager(document.querySelector('main#view'));
+CastleCrush.NetworkManager
+  .init()
+  .catch(e => CastleCrush.ViewManager.showError(e));
