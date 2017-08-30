@@ -6,8 +6,9 @@ import GameView from './GameView';
 import NotfoundView from './NotfoundView';
 
 export default class ViewManager {
-	constructor(target) {
-		this.target = target;
+	constructor() {
+		this.viewWrapper = document.querySelector('main#view');
+		this.errorWrapper = document.querySelector('asside#errorview');
 
 		// Register all known views
 		this.home = new HomeView();
@@ -55,12 +56,20 @@ export default class ViewManager {
 			document.title = title;
 
 			// Remove the old view
-			while(this.target.firstChild) {
-				this.target.removeChild(this.target.firstChild);
+			while(this.viewWrapper.firstChild) {
+				this.viewWrapper.removeChild(this.viewWrapper.firstChild);
 			}
 
 			// Load the view
-			view.show(this.target);
+			view.show(this.viewWrapper);
 		});
+	}
+
+	showError(error) {
+		const errorEl = document.createElement('div');
+		errorEl.classList.value = 'alert alert-danger';
+		errorEl.innerHTML = error.message || error;
+
+		this.errorWrapper.appendChild(errorEl);
 	}
 }

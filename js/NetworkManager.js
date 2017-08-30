@@ -13,12 +13,26 @@ export default class NetworkManager {
 		this.logger = Logger.create({
 			prefix: '[NETWORK]'
 		});
+
+		this.connectCounter = 0;
+	}
+
+	async init() {
+		this.ckeckConfigExists();
 		this.connect();
+	}
+
+	ckeckConfigExists() {
+		if(CastleCrush.CONFIG) return true;
+
+		throw new Error('CONFIG is missing! Please set the correct path ' +
+		                                      'or create one in the root folder!');
 	}
 
 	connect() {
 		this.state = 'connecting';
 
+		this.connectCounter++;
 		this.connection = new WebSocket(CastleCrush.CONFIG.SOCKET_ADDRESS);
 
 		this.connection.onopen = this.onopen.bind(this);
@@ -37,7 +51,11 @@ export default class NetworkManager {
 	 * @param  {[type]}  error  [description]
 	 */
 	onerror(error) {
-		if(this.state == 'connecting' && this.connection.readyState === 3) {
+		if(
+		  this.state == 'connecting' &&
+		  this.connection.readyState === 3 &&
+		  this.connectCounter < 5
+		) {
 			this.logger.warn('Server is not running! Attempt to start it');
 			fetch(CastleCrush.CONFIG.SERVER_START_ADDRESS)
 				.then(res => res.text())
@@ -47,19 +65,27 @@ export default class NetworkManager {
 					this.connect();
 				})
 				.catch(error => {
+					CastleCrush.ViewManager.showError(
+						'Can not connect to socket server! ' +
+						'Open the log for more information!'
+					);
 					this.logger.error('Can not start socket server!');
 					this.logger.error(
 						'Maybe the SERVER_START_ADDRESS is not correct:',
 						CastleCrush.CONFIG.SERVER_START_ADDRESS
 					);
 					this.logger.error('The error is:', error.message);
-					console.error(error);
+					throw error;
 				});
 		}
 		else {
+			CastleCrush.ViewManager.showError(
+				'You have a problem with your socket connection! ' +
+				'Open the log for more information!'
+			);
 			this.logger.error('You have a problem with your socket connection!');
-			this.logger.error('The error is:', error.message);
-			console.error(error);
+			this.logger.error('The error is:', error.message || error);
+			throw error;
 		}
 	}
 
