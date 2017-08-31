@@ -1,6 +1,7 @@
 import HomeView from './HomeView';
 import JoinView from './JoinView';
 import StartView from './StartView';
+import RoomView from './RoomView';
 import GameView from './GameView';
 
 import NotfoundView from './NotfoundView';
@@ -14,6 +15,7 @@ export default class ViewManager {
 		this.home = new HomeView();
 		this.join = new JoinView();
 		this.start = new StartView();
+		this.room = new RoomView();
 		this.game = new GameView();
 
 		this.not_found = new NotfoundView();

@@ -1,0 +1,14 @@
+#room
+	h1 Warte auf Spieler!
+
+	.join-area-wrapper
+
+		.join-area
+			.qr-code.form-control
+			input.clear-code.form-control.input-lg(readonly)
+			button.join.btn.btn-primary.btn-lg.btn-block(@click="joinLeft") Hier spielen
+
+		.join-area
+			.qr-code.form-control
+			input.clear-code.form-control.input-lg(readonly)
+			button.join.btn.btn-primary.btn-lg.btn-block(@click="joinRight") Hier spielen
