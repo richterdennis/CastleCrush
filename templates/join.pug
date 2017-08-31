@@ -1,2 +1,14 @@
 #join
-	h1 CastleCrush beitreten!
+	h1.hidden-xs CastleCrush beitreten
+
+	.join-area
+		.row.form-group
+			.col-sm-3.control-label.input-lg Nickname:
+			.col-sm-9
+				input.nickname.form-control.input-lg(placeholder="z. B. JonSmith1337")
+
+		.qr-code.form-control
+
+		input.clear-code.form-control.input-lg(placeholder="oder Code eingeben")
+
+		button.join.btn.btn-primary.btn-lg.btn-block(@click="join") beitreten

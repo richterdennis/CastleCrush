@@ -1,5 +1,47 @@
 #join {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
   h1 {
-    background: red;
+    margin-bottom: 20px;
+  }
+
+  .join-area {
+    flex: 1;
+
+    max-width: 494px;
+    margin: auto;
+
+    & > * {
+      margin-top: 15px;
+      margin-bottom: 15px;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    .qr-code {
+      position: relative;
+      width: 100%;
+      height: auto;
+
+      &:before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+      }
+    }
+
+    .clear-code {
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    .join {
+      width: 100%;
+    }
   }
 }
