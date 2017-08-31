@@ -33,6 +33,8 @@ export default class View {
 	}
 
 	show(target) {
+		this._target = target;
+
 		// this._holder.childNodes.forEach(target.appendChild.bind(target));
 		while(this._holder.firstChild) {
 			target.appendChild(this._holder.firstChild);
@@ -40,7 +42,14 @@ export default class View {
 	}
 
 	find(selector) {
-		return this._holder.querySelector(selector);
+		if(this._holder.firstChild)
+			return this._holder.querySelector(selector);
+
+		else if(this._target)
+			return this._target.querySelector(selector);
+
+		else
+			return null;
 	}
 
 	afterInit() {}
