@@ -7,4 +7,8 @@ export default class JoinView extends View {
 		this.title = 'Join';
 		this.templateUrl = 'templates/join';
 	}
+
+  join() {
+    CastleCrush.ViewManager.load('game');
+  }
 }
