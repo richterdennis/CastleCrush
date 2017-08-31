@@ -1,2 +1,21 @@
 #start
-	h1 CastleCrush starten!
+	h1 CastleCrush starten
+
+	.settings
+
+		.row.form-group
+			.col-sm-3.control-label.input-lg Schwirigkeitsgrad:
+			.col-sm-9
+				select#difficulty.form-control.input-lg
+					option(value="1") leicht
+					option(value="2") mittel
+					option(value="3") schwer
+
+		.row
+			.checkbox.input-lg
+				label
+					input#auto-restart(type="checkbox")
+					| Nach beendeter Runde automatisch eine neue starten
+
+	.btn-wrapper
+		button.btn.btn-primary.btn-lg(@click="start") starten
