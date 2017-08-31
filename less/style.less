@@ -6,6 +6,28 @@ html, body, #view {
   height: 100%;
 }
 
+body {
+  background: url(../public/assets/phaser.png);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#view {
+  display: flex;
+  flex-direction: column;
+
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.9);
+
+  @media (min-width: 1024px) {
+    width: 1024px;
+    max-height: 768px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  }
+}
+
 #errorview {
   position: absolute;
   right: 0;
@@ -14,3 +36,4 @@ html, body, #view {
 }
 
 @import "_home";
+@import "_start";
