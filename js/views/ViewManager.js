@@ -9,7 +9,7 @@ import NotfoundView from './NotfoundView';
 export default class ViewManager {
 	constructor() {
 		this.viewWrapper = document.querySelector('main#view');
-		this.errorWrapper = document.querySelector('asside#errorview');
+		this.errorWrapper = document.querySelector('aside#errorview');
 
 		// Register all known views
 		this.home = new HomeView();
