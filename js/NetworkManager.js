@@ -90,14 +90,13 @@ export default class NetworkManager {
 	}
 
 	onmessage(event) {
-		this.logger.info('You received a message: ', event.data);
-
 		event = JSON.parse(event.data);
+		this.logger.info('You received a message: ', event);
 		CastleCrush.EventManager.dispatch(event.type, event, false);
 	}
 
 	send(data) {
-		this.logger.info('You are sending a message: ', JSON.stringify(data));
+		this.logger.info('You are sending a message: ', data);
 
 		this.connection.send(JSON.stringify(data));
 	}
