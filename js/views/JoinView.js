@@ -85,7 +85,7 @@ export default class JoinView extends View {
 		const nickname = this.find('.nickname').value;
 		const [roomid, position] = code.split('-');
 		CastleCrush.EventManager.dispatch(EVENTS.JOIN_ROOM, {
-			roomid,
+			roomid: roomid.toUpperCase(),
 			position,
 			nickname
 		});

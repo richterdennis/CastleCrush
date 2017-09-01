@@ -7,5 +7,5 @@ export default {
 	generateRand6: () => 'xxxxxx'.replace(/[x]/g, (c) => {
 		const r = Math.random() * 16 | 0;
 		return r.toString(16);
-	})
+	}).toUpperCase()
 }
