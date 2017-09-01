@@ -25,6 +25,8 @@ export default class GameManager {
 		});
 
 		CastleCrush.EventManager.addEventListener(EVENTS.START_GAME, (event) => {
+			this.difficulty = event.difficulty;
+			this.autoRestart = event.autoRestart;
 			this.player1 = event.player1;
 			this.player2 = event.player2;
 
