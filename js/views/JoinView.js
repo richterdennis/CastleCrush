@@ -1,3 +1,5 @@
+import { EVENTS } from '../EventManager';
+
 import View from './View'
 
 export default class JoinView extends View {
@@ -70,12 +72,22 @@ export default class JoinView extends View {
 
 	join() {
 		this.scanner.stop();
+
+		CastleCrush.EventManager.addEventListener(EVENTS.START_GAME, (event) => {
+			CastleCrush.ViewManager.load('game');
+		});
+
 		const clearCode = this.find('.clear-code');
 		this.joinGame(clearCode.value);
-		CastleCrush.ViewManager.load('game');
 	}
 
 	joinGame(code) {
-		console.log(code);
+		const nickname = this.find('.nickname').value;
+		const [roomid, position] = code.split('-');
+		CastleCrush.EventManager.dispatch(EVENTS.JOIN_ROOM, {
+			roomid,
+			position,
+			nickname
+		});
 	}
 }
