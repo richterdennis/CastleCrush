@@ -13,8 +13,11 @@ export default class RoomView extends View {
 
     [1, 2].forEach(playerId => {
       const joinArea = this.find(`.join-area:nth-child(${playerId})`);
+      const qrCodeHolder = joinArea.querySelector('.code-holder');
       const clearCode = joinArea.querySelector('.clear-code');
-      clearCode.value = `${roomId}-${playerId}`
+
+      new QRCode(qrCodeHolder, `${roomId}-${playerId}`);
+      clearCode.value = `${roomId}-${playerId}`;
     });
   }
 
