@@ -10,13 +10,14 @@ export default class RoomView extends View {
 
   afterInit() {
     const roomId = 'test';
+    const joinUrl = location.href.split('#')[0] + '#/join/';
 
     [1, 2].forEach(playerId => {
       const joinArea = this.find(`.join-area:nth-child(${playerId})`);
       const qrCodeHolder = joinArea.querySelector('.code-holder');
       const clearCode = joinArea.querySelector('.clear-code');
 
-      new QRCode(qrCodeHolder, `${roomId}-${playerId}`);
+      new QRCode(qrCodeHolder, `${joinUrl}${roomId}-${playerId}`);
       clearCode.value = `${roomId}-${playerId}`;
     });
   }
