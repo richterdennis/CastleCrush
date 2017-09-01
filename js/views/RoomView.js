@@ -49,8 +49,8 @@ export default class RoomView extends View {
 			if(players.every(player => player.joined)) {
 				CastleCrush.EventManager.dispatch(EVENTS.START_GAME, {
 					roomid: CastleCrush.GameManager.roomid,
-					difficulty: CastleCrush.GameManager.difficulty;
-					autoRestart: CastleCrush.GameManager.autoRestart;
+					difficulty: CastleCrush.GameManager.difficulty,
+					autoRestart: CastleCrush.GameManager.autoRestart,
 					player1: players[0],
 					player2: players[1],
 				});
