@@ -9,7 +9,7 @@ import NotfoundView from './NotfoundView';
 export default class ViewManager {
 	constructor() {
 		this.viewWrapper = document.querySelector('main#view');
-		this.errorWrapper = document.querySelector('asside#errorview');
+		this.errorWrapper = document.querySelector('aside#errorview');
 
 		// Register all known views
 		this.home = new HomeView();
@@ -29,11 +29,11 @@ export default class ViewManager {
 			location.hash = '/';
 
 		// Load the view given in the URL
-		this.load(location.hash.substr(2), true);
+		this.load(location.hash.substr(2).split('/')[0], true);
 
 		// Check history back and forward to load the correct view
 		window.addEventListener('popstate', event => {
-		  this.load(location.hash.substr(2), true);
+		  this.load(location.hash.substr(2).split('/')[0], true);
 		});
 	}
 
@@ -44,7 +44,8 @@ export default class ViewManager {
 			viewName = 'not_found';
 
 		// Init the new view (load template etc.)
-		this[viewName || CastleCrush.CONST.DEFAULTS.VIEW].init().then(view => {
+		this[viewName || CastleCrush.CONST.DEFAULTS.VIEW].init(this).then(view => {
+			if(!view) return false;
 
 			// Create the page title
 			const title = CastleCrush.CONST.PAGE.TITLE
@@ -71,6 +72,7 @@ export default class ViewManager {
 		const errorEl = document.createElement('div');
 		errorEl.classList.value = 'alert alert-danger';
 		errorEl.innerHTML = error.message || error;
+		errorEl.addEventListener('click', () => errorEl.remove());
 
 		this.errorWrapper.appendChild(errorEl);
 	}

@@ -41,6 +41,7 @@ export default class EventManager {
 	 */
 	dispatch(eventType, event, doSend = true) {
 		event.type = eventType;
+		event.sender = CastleCrush.CONST.CLIENT.ID;
 		event.uuid = helper.uuid();
 		event.timestamp = Date.now();
 

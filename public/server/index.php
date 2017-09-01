@@ -18,6 +18,11 @@ $socketServer->onmessage(function($encMessage, $client, $server) {
 	$server->refreshSocketDieTime();
 	$decMessage = json_decode($encMessage);
 
+	if(!isset($decMessage->sender)) {
+		$server->sendMessage('Missing sender param!', $client);
+		return;
+	}
+
 	if(!isset($decMessage->roomid)) {
 		$server->sendMessage('You forgot the roomid!', $client);
 		return;
@@ -29,7 +34,7 @@ $socketServer->onmessage(function($encMessage, $client, $server) {
 
 		case 'join_room':
 			if(isset($rooms[$decMessage->roomid]))
-				$rooms[$decMessage->roomid][] = $client;
+				$rooms[$decMessage->roomid][$decMessage->sender] = $client;
 
 			else {
 				$server->sendMessage('The room does not exist!', $client);
@@ -47,7 +52,7 @@ $socketServer->onmessage(function($encMessage, $client, $server) {
 
 		case 'leave_room':
 			$room = $rooms[$decMessage->roomid];
-			unset($room[array_search($client, $room)]);
+			unset($room[$decMessage->sender]);
 			$server->broadcast($encMessage, $room);
 	}
 });
