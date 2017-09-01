@@ -29,11 +29,11 @@ export default class ViewManager {
 			location.hash = '/';
 
 		// Load the view given in the URL
-		this.load(location.hash.substr(2), true);
+		this.load(location.hash.substr(2).split('/')[0], true);
 
 		// Check history back and forward to load the correct view
 		window.addEventListener('popstate', event => {
-		  this.load(location.hash.substr(2), true);
+		  this.load(location.hash.substr(2).split('/')[0], true);
 		});
 	}
 
