@@ -26,10 +26,22 @@ export default class JoinView extends View {
 			mirror: false
 		});
 
+		const qrCode = this.find('.qr-code');
 		const clearCode = this.find('.clear-code');
 
 		this.scanner.addListener('scan', function (content) {
-			clearCode.value = content;
+			const path = content.split('#')[1];
+			if(path && path.startsWith('/join')) {
+				const code = path.split('/')[2];
+				if(code) {
+					qrCode.classList.remove('error');
+					qrCode.classList.add('success');
+					return clearCode.value = code;
+				}
+			}
+
+			qrCode.classList.remove('success');
+			qrCode.classList.add('error');
 		});
 
 		Instascan.Camera.getCameras()
