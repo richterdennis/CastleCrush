@@ -71,6 +71,7 @@ export default class ViewManager {
 		const errorEl = document.createElement('div');
 		errorEl.classList.value = 'alert alert-danger';
 		errorEl.innerHTML = error.message || error;
+		errorEl.addEventListener('click', () => errorEl.remove());
 
 		this.errorWrapper.appendChild(errorEl);
 	}
