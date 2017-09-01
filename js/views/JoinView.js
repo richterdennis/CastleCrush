@@ -8,6 +8,18 @@ export default class JoinView extends View {
 		this.templateUrl = 'templates/join';
 	}
 
+	async init(ViewManager) {
+		const params = location.hash.split('/');
+		if(params.length == 3) {
+			this.joinGame(params[2]);
+			ViewManager.load('game');
+
+			return false;
+		}
+
+		return await super.init();
+	}
+
 	afterInit() {
 		this.scanner = new Instascan.Scanner({
 			video: this.find('#scanner'),
@@ -47,6 +59,11 @@ export default class JoinView extends View {
 	join() {
 		this.scanner.stop();
 		const clearCode = this.find('.clear-code');
+		this.joinGame(clearCode.value);
 		CastleCrush.ViewManager.load('game');
+	}
+
+	joinGame(code) {
+		console.log(code);
 	}
 }

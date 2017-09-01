@@ -44,7 +44,8 @@ export default class ViewManager {
 			viewName = 'not_found';
 
 		// Init the new view (load template etc.)
-		this[viewName || CastleCrush.CONST.DEFAULTS.VIEW].init().then(view => {
+		this[viewName || CastleCrush.CONST.DEFAULTS.VIEW].init(this).then(view => {
+			if(!view) return false;
 
 			// Create the page title
 			const title = CastleCrush.CONST.PAGE.TITLE
