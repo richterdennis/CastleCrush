@@ -4,7 +4,6 @@ export default class Stage extends Phaser.State {
 	init() {
 		this.background = null;
 		this.bullet = null;
-		this.castle = null;
 		this.cannon = null;
 		this.land = null;
 		this.arrow = null;
@@ -29,7 +28,6 @@ export default class Stage extends Phaser.State {
 		// TODO: Hardcoded values need to be changed to values received from server
 		this.distanceFromSide = 200;
 		this.distanceFromBottom = 215;
-		this.numPlayers = 2;
 		this.players = []
 		this.playerTurn = 0;
 		this.currentPlayer;
@@ -82,20 +80,8 @@ export default class Stage extends Phaser.State {
 		this.land.update();
 		this.landScaling = this.world.width/ this.land.width; // assumes 16:9
 		this.land.addToWorld(0,0,0,0, this.landScaling, this.landScaling);
-
-		// create the 'castle'
-		this.castle = this.add.sprite(100,this.world.height - 215,'tank');
-		this.castle.anchor.setTo(0.5, 1);
-
-		// create the cannon
-		this.cannon = this.add.sprite(this.castle.x , this.castle.y-this.castle.height,
-			'turret');
-		this.cannon.anchor.setTo(-0.1, 0);
-
-		// Initialize power and angle values as their minvalues
-		this.power = this.minPower;
-		this.cannon.angle = -this.minAngle;
-
+		
+		// Indicator arrow
 		this.arrow = this.add.image(0,10, 'arrow')
 		this.arrow.anchor.setTo(1,0.5);
 		this.arrow.width = 0.5 * this.arrow.width;
@@ -103,9 +89,7 @@ export default class Stage extends Phaser.State {
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
-
-
-		// TODO create players and put them into position
+		// Create the players and put them into position
 		this.players = [
 			new Player(
 				this.game,
@@ -119,13 +103,22 @@ export default class Stage extends Phaser.State {
 				this.world.height - this.distanceFromBottom, false
 			)
 		];
-
-		/*
 		this.add.existing(this.players[0]);
 		this.add.existing(this.players[1]);
 		
 		this.currentPlayer = this.players[0];
-		*/
+
+
+		// TODO remove hardcoding and add cannon to Player Object
+		// create the cannon
+		this.cannon = this.add.sprite(this.players[0].x , this.players[0].y-this.players[0].height,
+			'turret');
+		this.cannon.anchor.setTo(-0.1, 0);
+
+		// Initialize power and angle values as their minvalues
+		this.power = this.minPower;
+		this.cannon.angle = -this.minAngle;
+
 	}
 	
 	update() {
@@ -177,10 +170,15 @@ export default class Stage extends Phaser.State {
 		if (this.bullet.exists) {
 			return;
 		}
-		this.bullet.reset(this.cannon.x, this.cannon.y);
+		this.bullet.reset(this.currentPlayer.x, this.currentPlayer.y);
 		this.bullet.exists = true;
 
-		var p = new Phaser.Point(this.cannon.x, this.cannon.y);
+		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y);
+
+		// FIXME: direction
+		var rotation = 
+			this.currentPlayer.leftSide ? this.cannon.rotation : 
+		console.log('angle: ' + this.cannon.angle + ', rotation: ' + this.cannon.rotation);
 		p.rotate(p.x, p.y, this.cannon.rotation, false, this.cannon.width);
 
 		// Add a force to the bullet
@@ -212,15 +210,14 @@ export default class Stage extends Phaser.State {
 		var x = Math.floor(this.bullet.x / this.landScaling);
 		var y = Math.floor(this.bullet.y / this.landScaling);
 		var alpha = this.land.getPixel(x,y).a;
-
-		// FIXME 
+ 
 		if (alpha > 0) {
 			// land is visible
 			console.log('land was hit at: ' + x + '|' + y);
 
 			// Carve out a circular shape with set radius 
 			this.land.blendDestinationOut();
-			this.land.circle(x,y, 50 / this.landScaling, 'rgba(0,0,0,255)');
+			this.land.circle(x,y, 20 / this.landScaling, 'rgba(0,0,0,255)');
 			this.land.blendReset();
 			this.land.update();
 			this.land.dirty = true;
@@ -233,6 +230,11 @@ export default class Stage extends Phaser.State {
 		console.log('bullet removed');
 		this.bullet.exists = false;
 		this.arrow.exists = false;
+
+		// TODO: Set next player as currentPlayer
+		this.playerTurn = (this.playerTurn + 1) % this.players.length;
+		console.log('Next Player: ' + this.playerTurn);
+		this.currentPlayer = this.players[this.playerTurn];
 	}
 
 }
