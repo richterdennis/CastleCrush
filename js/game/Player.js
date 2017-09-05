@@ -6,12 +6,11 @@ export default class Player extends Phaser.Sprite {
 
 		this.name = name;
 		this.health = 10;
-		this.power = 250;
-		this.angle = 0;
+		this.leftSide = leftSide;
 
 		this.anchor.setTo(0.5, 1);
 		if (!leftSide)
-			this.width = -this.width;
+			this.scale.x *= -1;
 
 		this.init();
 	}
