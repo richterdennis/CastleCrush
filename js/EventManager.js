@@ -40,10 +40,10 @@ export default class EventManager {
 	 * @param  {boolean}  doSend     Should the event send over network
 	 */
 	dispatch(eventType, event, doSend = true) {
-		event.type = eventType;
-		event.sender = CastleCrush.CONST.CLIENT.ID;
-		event.uuid = helper.uuid();
-		event.timestamp = Date.now();
+		event.type      = event.type      || eventType;
+		event.sender    = event.sender    || CastleCrush.CONST.CLIENT.ID;
+		event.uuid      = event.uuid      || helper.uuid();
+		event.timestamp = event.timestamp || Date.now();
 
 		if(this.listener[eventType])
 			this.listener[eventType].forEach(listener => listener(event));

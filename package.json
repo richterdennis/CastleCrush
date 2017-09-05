@@ -7,9 +7,9 @@
     "start": "npm run dev:open",
     "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run watch:config -s\" \"npm run server\"",
     "dev:open": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run watch:config -s\" \"npm run server:open\"",
-    "server": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080",
-    "server:open": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080 -o",
 
+    "server": "light-server --http2 -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080",
+    "server:open": "light-server --http2 -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080 -o",
     "build": "npm run build:html & npm run build:css & npm run build:js & npm run build:public",
     "build:html": "pug index.pug -o dist & pug templates -o dist/templates",
     "build:css": "lessc less/style.less dist/css/style.css",
