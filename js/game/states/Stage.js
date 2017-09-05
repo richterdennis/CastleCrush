@@ -23,13 +23,16 @@ export default class Stage extends Phaser.State {
 		// set Arcade physics
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.physics.arcade.gravity.y = 300;
-		this.physics.arcade.gravity.x = -100;
+		this.physics.arcade.gravity.x = 0;
 
 		
 		// TODO: Hardcoded values need to be changed to values received from server
+		this.distanceFromSide = 200;
+		this.distanceFromBottom = 215;
 		this.numPlayers = 2;
 		this.players = []
 		this.playerTurn = 0;
+		this.currentPlayer;
 
 		this.gameStates = ['Input', 'Flight', 'Damage'];
 		this.turnLengthInMS = 30000;
@@ -100,14 +103,28 @@ export default class Stage extends Phaser.State {
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
-		/*
+
+
+		// TODO create players and put them into position
 		this.players = [
-			new Player(this.game, 'Hans'),
-			new Player(this.game, 'Peter', 100, 100)
+			new Player(
+				this.game,
+				'Hans', this.distanceFromSide,
+				this.world.height - this.distanceFromBottom
+			),
+			new Player(
+				this.game,
+				'Peter',
+				this.world.width - this.distanceFromSide,
+				this.world.height - this.distanceFromBottom, false
+			)
 		];
 
+		/*
 		this.add.existing(this.players[0]);
 		this.add.existing(this.players[1]);
+		
+		this.currentPlayer = this.players[0];
 		*/
 	}
 	
@@ -166,8 +183,12 @@ export default class Stage extends Phaser.State {
 		var p = new Phaser.Point(this.cannon.x, this.cannon.y);
 		p.rotate(p.x, p.y, this.cannon.rotation, false, this.cannon.width);
 
+		// Add a force to the bullet
 		this.physics.arcade.velocityFromRotation(this.cannon.rotation, this.power,
 			this.bullet.body.velocity);
+
+		// And rotate the bullet towards its current velocity vector
+		this.bullet.rotation = this.bullet.body.angle;
 	}
 
 	bulletVsLand() {
