@@ -1,3 +1,5 @@
+import Player from '../Player.js'
+
 export default class Stage extends Phaser.State {
 	init() {
 		this.background = null;
@@ -22,6 +24,16 @@ export default class Stage extends Phaser.State {
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.physics.arcade.gravity.y = 300;
 		this.physics.arcade.gravity.x = -100;
+
+		
+		// TODO: Hardcoded values need to be changed to values received from server
+		this.numPlayers = 2;
+		this.players = []
+		this.playerTurn = 0;
+
+		this.gameStates = ['Input', 'Flight', 'Damage'];
+		this.turnLengthInMS = 30000;
+
 	}
 
 	preload() {
@@ -87,6 +99,16 @@ export default class Stage extends Phaser.State {
 		this.arrow.height = 0.5 * this.arrow.height;
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
+
+		/*
+		this.players = [
+			new Player(this.game, 'Hans'),
+			new Player(this.game, 'Peter', 100, 100)
+		];
+
+		this.add.existing(this.players[0]);
+		this.add.existing(this.players[1]);
+		*/
 	}
 	
 	update() {
@@ -173,11 +195,14 @@ export default class Stage extends Phaser.State {
 		// FIXME 
 		if (alpha > 0) {
 			// land is visible
-			console.log('land was hit');
+			console.log('land was hit at: ' + x + '|' + y);
+
+			// Carve out a circular shape with set radius 
 			this.land.blendDestinationOut();
-			this.land.circle(x,y, 50, 'rgba(0,0,0,255)');
+			this.land.circle(x,y, 50 / this.landScaling, 'rgba(0,0,0,255)');
 			this.land.blendReset();
 			this.land.update();
+			this.land.dirty = true;
 
 			this.removeBullet();
 		}
