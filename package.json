@@ -16,10 +16,10 @@
     "build:public": "ncp public dist/public",
 
     "watch": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\"",
-    "watch:html": "nodemon -e pug --ignore dist/ -x \"npm run build:html\"",
-    "watch:css": "nodemon -e less --ignore dist/ -x \"npm run build:css\"",
-    "watch:js": "nodemon -e js --ignore dist/ -x \"npm run build:js\"",
-    "watch:public": "nodemon --watch public --ignore dist/ -x \"npm run build:public\""
+    "watch:html": "nodemon -e pug --ignore dist/ -x npm run build:html",
+    "watch:css": "nodemon -e less --ignore dist/ -x npm run build:css",
+    "watch:js": "nodemon -e js --ignore dist/ -x npm run build:js",
+    "watch:public": "nodemon --watch public --ignore dist/ -x npm run build:public"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

@@ -20,9 +20,11 @@ CastleCrush.CONST = {
 };
 
 CastleCrush.EventManager = new EventManager();
+CastleCrush.NetworkManager = new NetworkManager();
 CastleCrush.GameManager = new GameManager();
 CastleCrush.ViewManager = new ViewManager();
-CastleCrush.NetworkManager = new NetworkManager();
+
 CastleCrush.NetworkManager
   .init()
+  .then(() => CastleCrush.ViewManager.init())
   .catch(e => CastleCrush.ViewManager.showError(e));

@@ -1,0 +1,35 @@
+#wait {
+	flex: 1;
+
+	display: flex;
+	flex-direction: column;
+
+	&.ready {
+		pointer-events: none;
+    opacity: 0.5;
+	}
+
+	h1 {
+		margin-bottom: 20px;
+	}
+
+	.wrapper {
+		flex: 1;
+
+		max-width: 494px;
+		margin: auto;
+
+		& > * {
+			margin-top: 15px;
+			margin-bottom: 15px;
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+
+		> .ready {
+			width: 100%;
+		}
+	}
+}

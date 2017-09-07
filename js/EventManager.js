@@ -48,13 +48,7 @@ export default class EventManager {
 		if(this.listener[eventType])
 			this.listener[eventType].forEach(listener => listener(event));
 
-		if([
-		 	EVENTS.START_ROOM,
-		 	EVENTS.JOIN_ROOM,
-		 	EVENTS.LEAVE_ROOM,
-		 	EVENTS.START_GAME,
-		 	EVENTS.GAME_ACTION
-		].includes(eventType) && doSend)
+		if(![].includes(eventType) && doSend)
 			CastleCrush.NetworkManager.send(event);
 	}
 }
@@ -71,6 +65,7 @@ const EVENTS = {
 	START_ROOM:  'start_room',
 	JOIN_ROOM:   'join_room',
 	LEAVE_ROOM:  'leave_room',
+	READY:       'ready',
 	START_GAME:  'start_game',
 	GAME_ACTION: 'game_action'
 };

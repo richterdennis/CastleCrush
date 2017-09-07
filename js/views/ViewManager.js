@@ -2,6 +2,7 @@ import HomeView from './HomeView';
 import JoinView from './JoinView';
 import StartView from './StartView';
 import RoomView from './RoomView';
+import WaitView from './WaitView';
 import GameView from './GameView';
 
 import NotfoundView from './NotfoundView';
@@ -16,12 +17,10 @@ export default class ViewManager {
 		this.join = new JoinView();
 		this.start = new StartView();
 		this.room = new RoomView();
+		this.wait = new WaitView();
 		this.game = new GameView();
 
 		this.not_found = new NotfoundView();
-
-		// Init URL bar and history
-		this.init();
 	}
 
 	init() {

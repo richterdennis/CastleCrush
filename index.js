@@ -34,10 +34,10 @@ io.on('connect', (client) => {
 		console.log(event.roomid, event.type, event.sender);
 
 		if(!event.sender)
-			return client.emit('error', 'The following param is missing: "sender"');
+			return client.emit('rejected', 'The following param is missing: "sender"');
 
 		if(!event.roomid)
-			return client.emit('error', 'The following param is missing: "roomid"');
+			return client.emit('rejected', 'The following param is missing: "roomid"');
 
 		switch(event.type) {
 			case 'start_room':

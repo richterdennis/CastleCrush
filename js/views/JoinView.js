@@ -14,7 +14,7 @@ export default class JoinView extends View {
 		const params = location.hash.split('/');
 		if(params.length == 3) {
 			this.joinGame(params[2]);
-			ViewManager.load('game');
+			ViewManager.load('wait');
 
 			return false;
 		}
@@ -73,21 +73,16 @@ export default class JoinView extends View {
 	join() {
 		this.scanner.stop();
 
-		CastleCrush.EventManager.addEventListener(EVENTS.START_GAME, (event) => {
-			CastleCrush.ViewManager.load('game');
-		});
-
-		const clearCode = this.find('.clear-code');
-		this.joinGame(clearCode.value);
+		const clearCode = this.find('.clear-code').value;
+		this.joinGame(clearCode);
+		CastleCrush.ViewManager.load('wait');
 	}
 
 	joinGame(code) {
-		const nickname = this.find('.nickname').value;
 		const [roomid, position] = code.split('-');
 		CastleCrush.EventManager.dispatch(EVENTS.JOIN_ROOM, {
 			roomid: roomid.toUpperCase(),
-			position,
-			nickname
+			position: position
 		});
 	}
 }
