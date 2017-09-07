@@ -21,9 +21,6 @@ export default class ViewManager {
 		this.game = new GameView();
 
 		this.not_found = new NotfoundView();
-
-		// Init URL bar and history
-		this.init();
 	}
 
 	init() {
