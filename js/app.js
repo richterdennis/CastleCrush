@@ -5,7 +5,7 @@ import NetworkManager from './NetworkManager';
 import GameManager from './game/GameManager';
 import ViewManager from './views/ViewManager';
 
-window.CastleCrush = window.CastleCrush || {};
+window.CastleCrush = {};
 
 CastleCrush.CONST = {
 	CLIENT: {

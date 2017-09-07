@@ -16,22 +16,14 @@ export default class NetworkManager {
 	}
 
 	async init() {
-		this.ckeckConfigExists();
 		this.connect();
-	}
-
-	ckeckConfigExists() {
-		if(CastleCrush.CONFIG) return true;
-
-		throw new Error('CONFIG is missing! Please set the correct path ' +
-		                                      'or create one in the root folder!');
 	}
 
 	connect() {
 		this.state = 'connecting';
 
 		this.connection = io(
-			'https://' + location.hostname + ':' + CastleCrush.CONFIG.SOCKET_PORT,
+			location.origin,
 			{ rejectUnauthorized: false }
 		);
 
