@@ -21,3 +21,7 @@
 | `npm run build:<subtask>` | Runs a specific subtask of build (replace `<subtask>` with `html`, `css`, `js`, `public`) |
 | `npm run watch` | Runs all watch tasks |
 | `npm run watch:<subtask>` | Runs a specific subtask of watch (replace `<subtask>` with `html`, `css`, `js`, `public`) |
+
+## License
+This repository is licensed under the MIT license, more under
+[LICENSE](LICENSE).
