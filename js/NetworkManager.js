@@ -28,6 +28,7 @@ export default class NetworkManager {
 		);
 
 		this.connection.on('connect', this.onopen.bind(this));
+		this.connection.on('rejected', this.onerror.bind(this));
 		this.connection.on('error', this.onerror.bind(this));
 		this.connection.on('message', this.onmessage.bind(this));
 	}
