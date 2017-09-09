@@ -1,7 +1,16 @@
 import Player from '../Player.js'
 
+const GAMESTATES = {
+	INPUT: 'input',
+	INFLIGHT: 'inflight',
+	BETWEENTURN: 'betweenturn'
+};
+
 export default class Stage extends Phaser.State {
+
 	init() {
+		this.gamestate = GAMESTATES.INPUT;
+
 		this.background = null;
 		this.bullet = null;
 		this.cannon = null;
@@ -34,9 +43,6 @@ export default class Stage extends Phaser.State {
 		this.playerTurn = 0;
 		this.currentPlayer;
 
-		this.gameStates = ['Input', 'Flight', 'Damage'];
-		this.turnLengthInMS = 30000;
-
 		this.manager = CastleCrush.GameManager;
 		this.options = {
 			difficulty: this.manager.difficulty,
@@ -44,7 +50,7 @@ export default class Stage extends Phaser.State {
 		};
 		console.log("Game started with options: \n", this.options);
 
-		this.maxWindPower = Math.abs(this.options.difficulty) * 50;
+		this.maxWindPower = Math.abs(this.options.difficulty) * 75;
 		console.log(this.maxWindPower);
 	}
 
@@ -79,9 +85,7 @@ export default class Stage extends Phaser.State {
 		// DEBUG Create a FPS Counter in the top left corner
 		this.fpsText = this.add.text(8, 8, 'FPS: 0', { font: "12px Arial",
 			fill: "#ffffff" });
-		this.powerText = this.add.text(8, 24, 'Power: 100', { font: "12px Arial",
-			fill: "#ffffff" });
-		this.angleText = this.add.text(8, 40, 'Angle: 10', { font: "12px Arial",
+		this.windText = this.add.text(8, 24, 'Power: 100', { font: "12px Arial",
 			fill: "#ffffff" });
 		this.debugText = this.add.text(8, 56, '', { font: "12px Arial",
 			fill: "#ffffff" });
@@ -106,12 +110,13 @@ export default class Stage extends Phaser.State {
 		this.players = [
 			new Player(
 				this.game,
-				'Hans', this.distanceFromSide,
+				this.options.players[0], 
+				this.distanceFromSide,
 				this.world.height - this.distanceFromBottom
 			),
 			new Player(
 				this.game,
-				'Peter',
+				this.options.players[1],
 				this.world.width - this.distanceFromSide,
 				this.world.height - this.distanceFromBottom, false
 			)
@@ -135,13 +140,23 @@ export default class Stage extends Phaser.State {
 	}
 	
 	update() {
-		this.playerInput();
 		this.updateDebugText();
 
-		if (this.bullet.exists) {
-			
+		if (this.gamestate === GAMESTATES.INPUT) {
+			this.playerInput();
+		}
+		else if (this.gamestate === GAMESTATES.INFLIGHT) {
 			this.bulletVsLand();
 		} 
+		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
+			// recalculate wind check gameoverstate
+			this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+			this.playerTurn = (this.playerTurn + 1) % this.players.length;
+			console.log('Next Player: ' + this.playerTurn);
+			this.currentPlayer = this.players[this.playerTurn];
+
+			this.gamestate = GAMESTATES.INPUT;
+		}
 	}
 
 	playerInput() {
@@ -165,6 +180,7 @@ export default class Stage extends Phaser.State {
 
 		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			this.shooting();
+			this.gamestate = GAMESTATES.INFLIGHT;
 		}
 
 
@@ -173,8 +189,7 @@ export default class Stage extends Phaser.State {
 		var fps = Math.round(1000 / this.time.elapsedMS);
 		this.fpsText.text = 'FPS: ' + fps;
 
-		this.powerText.text = 'Power: ' + this.currentPlayer.shotPower;
-		this.angleText.text = 'Angle: ' + -this.currentPlayer.shotAngle;
+		this.windText.text = 'Wind: ' + this.physics.arcade.gravity.x;
 		this.debugText.text = 'current: ' + this.currentPlayer.toString();
 	}
 
@@ -247,11 +262,7 @@ export default class Stage extends Phaser.State {
 		console.log('bullet removed');
 		this.bullet.exists = false;
 		this.arrow.exists = false;
-
-		// TODO: Set next player as currentPlayer
-		this.playerTurn = (this.playerTurn + 1) % this.players.length;
-		console.log('Next Player: ' + this.playerTurn);
-		this.currentPlayer = this.players[this.playerTurn];
+		this.gamestate = GAMESTATES.BETWEENTURN;
 	}
 
 }
