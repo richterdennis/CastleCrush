@@ -14,7 +14,9 @@ export default class Stage extends Phaser.State {
 		this.minPower = 250;
 		this.maxPower = 1000;
 		this.minAngle = 10;
-		this.maxAngle = 90
+		this.maxAngle = 90;
+		// this.minAngle = 0;
+		// this.maxAngle = 360;
 
 		// disable texture filtering
 		this.game.renderer.renderSession.roundPixels = true;
@@ -35,6 +37,15 @@ export default class Stage extends Phaser.State {
 		this.gameStates = ['Input', 'Flight', 'Damage'];
 		this.turnLengthInMS = 30000;
 
+		this.manager = CastleCrush.GameManager;
+		this.options = {
+			difficulty: this.manager.difficulty,
+			players: [this.manager.player1, this.manager.player2]
+		};
+		console.log("Game started with options: \n", this.options);
+
+		this.maxWindPower = Math.abs(this.options.difficulty) * 50;
+		console.log(this.maxWindPower);
 	}
 
 	preload() {
@@ -71,6 +82,8 @@ export default class Stage extends Phaser.State {
 		this.powerText = this.add.text(8, 24, 'Power: 100', { font: "12px Arial",
 			fill: "#ffffff" });
 		this.angleText = this.add.text(8, 40, 'Angle: 10', { font: "12px Arial",
+			fill: "#ffffff" });
+		this.debugText = this.add.text(8, 56, '', { font: "12px Arial",
 			fill: "#ffffff" });
 
 		// Creates land bitmap data, scales it relative to the world size and 
@@ -134,20 +147,20 @@ export default class Stage extends Phaser.State {
 	playerInput() {
 		// TODO: Change to touch controls
 		if (this.input.keyboard.isDown(Phaser.Keyboard.W) && 
-			this.cannon.angle > -this.maxAngle) {
-			this.cannon.angle -= 1;
+			this.currentPlayer.shotAngle > -this.maxAngle) {
+			this.currentPlayer.shotAngle -= 1;
 		}
 		else if (this.input.keyboard.isDown(Phaser.Keyboard.S) && 
-			this.cannon.angle < -this.minAngle) {
-			this.cannon.angle += 1;
+			this.currentPlayer.shotAngle < -this.minAngle) {
+			this.currentPlayer.shotAngle += 1;
 		}
 		if (this.input.keyboard.isDown(Phaser.Keyboard.D) && 
-			this.power < this.maxPower) {
-			this.power += 10;
+			this.currentPlayer.shotPower < this.maxPower) {
+			this.currentPlayer.shotPower += 10;
 		}
 		else if (this.input.keyboard.isDown(Phaser.Keyboard.A) && 
-			this.power > this.minPower) {
-			this.power -= 10;
+			this.shotPower > this.minPower) {
+			this.shotPower -= 10;
 		}
 
 		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
@@ -160,8 +173,9 @@ export default class Stage extends Phaser.State {
 		var fps = Math.round(1000 / this.time.elapsedMS);
 		this.fpsText.text = 'FPS: ' + fps;
 
-		this.powerText.text = 'Power: ' + this.power;
-		this.angleText.text = 'Angle: ' + -this.cannon.angle;
+		this.powerText.text = 'Power: ' + this.currentPlayer.shotPower;
+		this.angleText.text = 'Angle: ' + -this.currentPlayer.shotAngle;
+		this.debugText.text = 'current: ' + this.currentPlayer.toString();
 	}
 
 	shooting() {
@@ -176,13 +190,12 @@ export default class Stage extends Phaser.State {
 		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y);
 
 		// FIXME: direction
-		var rotation = 
-			this.currentPlayer.leftSide ? this.cannon.rotation : 
-		console.log('angle: ' + this.cannon.angle + ', rotation: ' + this.cannon.rotation);
+		var rotation = this.math.degToRad(this.currentPlayer.shotAngle);
+		console.log(this.currentPlayer.leftSide, 'c_rotation: ' + this.cannon.rotation + ', rotation: ' + rotation);
 		p.rotate(p.x, p.y, this.cannon.rotation, false, this.cannon.width);
 
 		// Add a force to the bullet
-		this.physics.arcade.velocityFromRotation(this.cannon.rotation, this.power,
+		this.physics.arcade.velocityFromRotation(rotation, this.power,
 			this.bullet.body.velocity);
 
 		// And rotate the bullet towards its current velocity vector
@@ -213,7 +226,6 @@ export default class Stage extends Phaser.State {
  
 		if (alpha > 0) {
 			// land is visible
-			console.log('land was hit at: ' + x + '|' + y);
 
 			// Carve out a circular shape with set radius 
 			this.land.blendDestinationOut();
@@ -222,10 +234,15 @@ export default class Stage extends Phaser.State {
 			this.land.update();
 			this.land.dirty = true;
 
+			this.explode();
 			this.removeBullet();
 		}
 	}
 	
+	explode() {
+		let p = new Phaser.Point(this.bullet.x, this.bullet.y);
+		console.log("Land was hit at: ", p);
+	}
 	removeBullet() {
 		console.log('bullet removed');
 		this.bullet.exists = false;

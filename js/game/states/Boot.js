@@ -20,8 +20,6 @@ export default class Boot extends Phaser.State {
 		);
 		logo.anchor.setTo(0.5, 0.5);
 
-		// TODO add initialization code
-
 		this.state.start('Stage');
 	}
 }
