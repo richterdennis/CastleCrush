@@ -8,11 +8,6 @@
     "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run server\"",
     "server": "node index.js",
 
-=======
-    "start": "npm run dev",
-    "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run server\"",
-    "server": "light-server -s dist -w \"dist/**/*.html, dist/**/*.js\" -w \"dist/**/*.css # # reloadcss\" -p 8080 -o",
->>>>>>> Added some basic placeholder sprites
     "build": "npm run build:html & npm run build:css & npm run build:js & npm run build:public",
     "build:html": "pug index.pug -o dist & pug templates -o dist/templates",
     "build:css": "lessc less/style.less dist/css/style.css",
