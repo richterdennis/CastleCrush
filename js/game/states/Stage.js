@@ -6,6 +6,8 @@ const GAMESTATES = {
 	BETWEENTURN: 'betweenturn'
 };
 
+const DIFFICULTY_WIND_MULTIPLIER = 50;
+
 export default class Stage extends Phaser.State {
 
 	init() {
@@ -23,18 +25,10 @@ export default class Stage extends Phaser.State {
 		this.minPower = 250;
 		this.maxPower = 1000;
 		this.minAngle = 10;
-		this.maxAngle = 90;
-		// this.minAngle = 0;
-		// this.maxAngle = 360;
+		this.maxAngle = 170;
 
 		// disable texture filtering
 		this.game.renderer.renderSession.roundPixels = true;
-
-		// set Arcade physics
-		this.physics.startSystem(Phaser.Physics.ARCADE);
-		this.physics.arcade.gravity.y = 300;
-		this.physics.arcade.gravity.x = 0;
-
 		
 		// TODO: Hardcoded values need to be changed to values received from server
 		this.distanceFromSide = 200;
@@ -49,9 +43,12 @@ export default class Stage extends Phaser.State {
 			players: [this.manager.player1, this.manager.player2]
 		};
 		console.log("Game started with options: \n", this.options);
+		this.maxWindPower = Math.abs(this.options.difficulty) * DIFFICULTY_WIND_MULTIPLIER;
 
-		this.maxWindPower = Math.abs(this.options.difficulty) * 75;
-		console.log(this.maxWindPower);
+		// set Arcade physics
+		this.physics.startSystem(Phaser.Physics.ARCADE);
+		this.physics.arcade.gravity.y = 300;
+		this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 	}
 
 	preload() {
@@ -160,7 +157,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	playerInput() {
-		// TODO: Change to touch controls
+		// TODO: Send Event to currentPlayer and wait for shot parameters
 		if (this.input.keyboard.isDown(Phaser.Keyboard.W) && 
 			this.currentPlayer.shotAngle > -this.maxAngle) {
 			this.currentPlayer.shotAngle -= 1;
@@ -182,15 +179,13 @@ export default class Stage extends Phaser.State {
 			this.shooting();
 			this.gamestate = GAMESTATES.INFLIGHT;
 		}
-
-
 	}
 	updateDebugText() {
 		var fps = Math.round(1000 / this.time.elapsedMS);
 		this.fpsText.text = 'FPS: ' + fps;
 
 		this.windText.text = 'Wind: ' + this.physics.arcade.gravity.x;
-		this.debugText.text = 'current: ' + this.currentPlayer.toString();
+		this.debugText.text = 'PLAYER DEBUG INFO:\n' + this.currentPlayer.toString();
 	}
 
 	shooting() {
