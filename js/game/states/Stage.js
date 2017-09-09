@@ -159,8 +159,8 @@ export default class Stage extends Phaser.State {
 			this.currentPlayer.shotPower += 10;
 		}
 		else if (this.input.keyboard.isDown(Phaser.Keyboard.A) && 
-			this.shotPower > this.minPower) {
-			this.shotPower -= 10;
+			this.currentPlayer.shotPower > this.minPower) {
+			this.currentPlayer.shotPower -= 10;
 		}
 
 		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
@@ -192,10 +192,10 @@ export default class Stage extends Phaser.State {
 		// FIXME: direction
 		var rotation = this.math.degToRad(this.currentPlayer.shotAngle);
 		console.log(this.currentPlayer.leftSide, 'c_rotation: ' + this.cannon.rotation + ', rotation: ' + rotation);
-		p.rotate(p.x, p.y, this.cannon.rotation, false, this.cannon.width);
+		p.rotate(p.x, p.y, rotation, false, this.cannon.width);
 
 		// Add a force to the bullet
-		this.physics.arcade.velocityFromRotation(rotation, this.power,
+		this.physics.arcade.velocityFromRotation(rotation, this.currentPlayer.shotPower,
 			this.bullet.body.velocity);
 
 		// And rotate the bullet towards its current velocity vector
