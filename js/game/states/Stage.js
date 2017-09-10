@@ -143,10 +143,10 @@ export default class Stage extends Phaser.State {
 	
 	update() {
 		this.updateDebugText();
-		this.showShotIndicator();
-
+		
 		if (this.gamestate === GAMESTATES.INPUT) {
 			this.playerInput();
+			this.updateShotIndicator();
 		}
 		else if (this.gamestate === GAMESTATES.INFLIGHT) {
 			this.bulletVsLand();
@@ -203,11 +203,11 @@ export default class Stage extends Phaser.State {
 		this.bullet.reset(this.currentPlayer.x, this.currentPlayer.y);
 		this.bullet.exists = true;
 
-		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y);
+		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y-this.currentPlayer.height);
 
 		// FIXME: direction
 		var rotation = this.math.degToRad(this.currentPlayer.shotAngle);
-		console.log(this.currentPlayer.leftSide, 'c_rotation: ' + this.cannon.rotation + ', rotation: ' + rotation);
+		console.log(this.currentPlayer.leftSide, 'rotation: ' + rotation);
 		p.rotate(p.x, p.y, rotation, false, this.cannon.width);
 
 		// Add a force to the bullet
@@ -245,7 +245,7 @@ export default class Stage extends Phaser.State {
 
 			// Carve out a circular shape with set radius 
 			this.land.blendDestinationOut();
-			this.land.circle(x,y, 20 / this.landScaling, 'rgba(0,0,0,255)');
+			this.land.circle(x,y, 40 / this.landScaling, 'rgba(0,0,0,255)');
 			this.land.blendReset();
 			this.land.update();
 			this.land.dirty = true;
@@ -266,9 +266,9 @@ export default class Stage extends Phaser.State {
 		this.gamestate = GAMESTATES.BETWEENTURN;
 	}
 
-	showShotIndicator() {
+	updateShotIndicator() {
 		this.g.x = this.currentPlayer.x
-		this.g.y = this.currentPlayer.y - this.currentPlayer.height;;
+		this.g.y = this.currentPlayer.y - this.currentPlayer.height;
     	this.g.angle = this.currentPlayer.shotAngle;
 	}
 }
