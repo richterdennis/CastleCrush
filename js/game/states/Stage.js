@@ -103,6 +103,11 @@ export default class Stage extends Phaser.State {
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
+		// ShotIndicator?
+		this.g = this.add.graphics(100, 100);
+		this.g.lineStyle(3, 0xAA0000, 1);
+		this.g.lineTo(100, 0);
+
 		// Create the players and put them into position
 		this.players = [
 			new Player(
@@ -138,6 +143,7 @@ export default class Stage extends Phaser.State {
 	
 	update() {
 		this.updateDebugText();
+		this.showShotIndicator();
 
 		if (this.gamestate === GAMESTATES.INPUT) {
 			this.playerInput();
@@ -260,4 +266,9 @@ export default class Stage extends Phaser.State {
 		this.gamestate = GAMESTATES.BETWEENTURN;
 	}
 
+	showShotIndicator() {
+		this.g.x = this.currentPlayer.x
+		this.g.y = this.currentPlayer.y - this.currentPlayer.height;;
+    	this.g.angle = this.currentPlayer.shotAngle;
+	}
 }
