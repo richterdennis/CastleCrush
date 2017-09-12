@@ -12,24 +12,34 @@ html, body, #view {
 }
 
 body {
-  background: url(../public/assets/phaser.png);
+  background: url(../public/assets/landscape.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+.btn {
+  background-image: url("../public/assets/holz.jpg");
+  border-radius: 0px;
+}
+
+
 #view {
   display: flex;
   flex-direction: column;
 
   padding: 30px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0);
+
+
 
   @media (min-width: 1024px) {
     width: 1024px;
     max-height: 768px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    // box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     padding: 40px;
   }
 }
