@@ -41,9 +41,9 @@ export default class Stage extends Phaser.State {
 
 		// preload assets
 		this.load.image('background', 'public/assets/background_sky.png');
-		this.load.image('tank', 'public/assets/tanks_tankGrey_body5.png');
-		this.load.image('turret', 'public/assets/tanks_turret3.png');
-		this.load.image('bullet', 'public/assets/tank_bullet2.png');
+		this.load.image('tank', 'public/assets/tank.png');
+		this.load.image('turret', 'public/assets/turret.png');
+		this.load.image('bullet', 'public/assets/bullet.png');
 		this.load.image('land', 'public/assets/land.png');
 		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
 	}
@@ -59,7 +59,7 @@ export default class Stage extends Phaser.State {
 		// create a bullet and add physics to it.
 		// bullet does not exist in game when created. Shooting the bullet will
 		// set it to exist.
-		this.bullet = this.add.sprite(this.world.centerX,this.world.centerY,
+		this.bullet = this.add.sprite(this.world.centerX ,this.world.centerY,
 			'bullet');
 		this.bullet.exists = false;
 		this.bullet.anchor.setTo(1,0.5);
@@ -75,7 +75,7 @@ export default class Stage extends Phaser.State {
 
 		// Creates land bitmap data, scales it relative to the world size and 
 		// draws it on screen
-		this.land = this.add.bitmapData(1920, 1080);
+		this.land = this.add.bitmapData(1280, 720);
 		this.land.draw('land');
 		this.land.update();
 		this.landScaling = this.world.width/ this.land.width; // assumes 16:9
@@ -94,13 +94,13 @@ export default class Stage extends Phaser.State {
 			new Player(
 				this.game,
 				'Hans', this.distanceFromSide,
-				this.world.height - this.distanceFromBottom
+				this.world.height - this.distanceFromBottom + 175
 			),
 			new Player(
 				this.game,
 				'Peter',
 				this.world.width - this.distanceFromSide,
-				this.world.height - this.distanceFromBottom, false
+				this.world.height - this.distanceFromBottom + 200, false
 			)
 		];
 		this.add.existing(this.players[0]);
@@ -111,9 +111,9 @@ export default class Stage extends Phaser.State {
 
 		// TODO remove hardcoding and add cannon to Player Object
 		// create the cannon
-		this.cannon = this.add.sprite(this.players[0].x , this.players[0].y-this.players[0].height,
+		this.cannon = this.add.sprite(this.players[0].x +12, (this.players[0].y-this.players[0].height) + 32,
 			'turret');
-		this.cannon.anchor.setTo(-0.1, 0);
+		this.cannon.anchor.setTo(0, 1);
 
 		// Initialize power and angle values as their minvalues
 		this.power = this.minPower;
@@ -170,7 +170,7 @@ export default class Stage extends Phaser.State {
 		if (this.bullet.exists) {
 			return;
 		}
-		this.bullet.reset(this.currentPlayer.x, this.currentPlayer.y);
+		this.bullet.reset(this.players[0].x + 30 , (this.players[0].y-this.players[0].height));
 		this.bullet.exists = true;
 
 		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y);
@@ -193,7 +193,7 @@ export default class Stage extends Phaser.State {
 		// if bullet flies offscreen destroy it and return out of this function
 		if (this.bullet.x < 0 || this.bullet.x > this.game.world.width 
 			|| this.bullet.y > this.game.height)
-		{
+		{ 
    		this.removeBullet();
     		return;
 		} // unless it flies above the sky show arrow to indicate horizontal position
