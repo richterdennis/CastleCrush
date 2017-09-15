@@ -105,7 +105,7 @@ export default class Stage extends Phaser.State {
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
-		// ShotIndicator?
+		// ShotIndicator
 		this.g = this.add.graphics(100, 100);
 		this.g.lineStyle(3, 0xAA0000, 1);
 		this.g.lineTo(100, 0);
@@ -142,9 +142,10 @@ export default class Stage extends Phaser.State {
 		this.cannon.angle = -this.minAngle;
 
 		// input
-		this.pStart = null;
-		this.pEnd = null;
 		this.lastState = false;
+		this.pLine = new Phaser.Line();
+		this.gLine = this.add.graphics(0,0);
+		this.gLine.lineStyle(3, 0xFFFFFF, 1);
 
 	}
 	
@@ -173,16 +174,28 @@ export default class Stage extends Phaser.State {
 	playerInput() {
 		var pointer = this.input.activePointer;
 
-		if (pointer.isDown && !this.lastState) {
-			this.pStart = new Phaser.Point(pointer.x, pointer.y);
+		if (pointer.isDown && !this.lastState) // Pointer went down
+		{
+			this.pLine.start = new Phaser.Point(pointer.x, pointer.y);
 			console.log("Pointer just went down");
+			
 		}
-		else if(!pointer.isDown && this.lastState) {
-			this.pEnd = pointer.position;
+		else if (pointer.isDown && this.lastState) // Pointer is down
+		{
+			this.pLine.end = new Phaser.Point(pointer.x, pointer.y);
+			console.log("Pointer pressed");
+			this.gLine.clear();
+			this.gLine.lineStyle(3, 0xFFFFFF, 1);
+			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
+			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
+		}
+		else if(!pointer.isDown && this.lastState) // Pointer went up
+		{
 			console.log("Pointer just went up");
-			console.info(this.pStart, this.pEnd);
+			console.info(this.pLine.start, this.pLine.end, this.pLine.angle, this.pLine.length);
 		}
 		this.lastState = pointer.isDown;
+
 
 
 

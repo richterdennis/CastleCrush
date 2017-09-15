@@ -1,5 +1,5 @@
 export default class Player extends Phaser.Sprite {
-	constructor(game, name, x = 0, y = 0, leftSide = true) {
+	constructor(game, name, x = 0, y = 0, leftSide = true, localPlayer = true) {
 		super(game);
 
 		Phaser.Sprite.call(this, game, x, y, 'tank');
@@ -9,6 +9,7 @@ export default class Player extends Phaser.Sprite {
 		this.shotAngle = -90;
 		this.shotPower = 400;
 		this.leftSide = leftSide;
+		this.localPlayer = localPlayer;
 
 		this.anchor.setTo(0.5, 1);
 		if (!leftSide)
