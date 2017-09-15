@@ -188,7 +188,7 @@ export default class Stage extends Phaser.State {
 			this.gLine.lineStyle(3, 0xFFFFFF, 1);
 			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
-			this.currentPlayer.shotAngle = this.math.radToDeg(this.pLine.angle);
+			this.currentPlayer.shotAngle = this.pLine.angle;
 			this.currentPlayer.shotPower = this.pLine.length;
 		}
 		else if(!pointer.isDown && this.lastState) // Pointer went up
@@ -244,7 +244,7 @@ export default class Stage extends Phaser.State {
 		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y-this.currentPlayer.height);
 
 		// FIXME: direction
-		var rotation = this.math.degToRad(this.currentPlayer.shotAngle);
+		var rotation = this.currentPlayer.shotAngle;
 		console.log(this.currentPlayer.leftSide, 'rotation: ' + rotation);
 		p.rotate(p.x, p.y, rotation, false, this.cannon.width);
 
@@ -307,6 +307,6 @@ export default class Stage extends Phaser.State {
 	updateShotIndicator() {
 		this.g.x = this.currentPlayer.x
 		this.g.y = this.currentPlayer.y - this.currentPlayer.height;
-    	this.g.angle = this.currentPlayer.shotAngle;
+    	this.g.rotation = this.currentPlayer.shotAngle;
 	}
 }
