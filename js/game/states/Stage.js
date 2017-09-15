@@ -61,6 +61,7 @@ export default class Stage extends Phaser.State {
 		this.load.image('turret', 'public/assets/tanks_turret3.png');
 		this.load.image('bullet', 'public/assets/tank_bullet2.png');
 		this.load.image('land', 'public/assets/land.png');
+		this.load.image('landscape', 'public/assets/landscape.png');
 		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
 	}
 
@@ -68,7 +69,7 @@ export default class Stage extends Phaser.State {
 		console.log("Stage loaded.");
 
 		// set background image and scale it to the screensize
-		this.background = this.add.image(0,0,'background');
+		this.background = this.add.image(0,0,'landscape');
 		this.background.height = this.world.height;
 		this.background.width = this.world.width;
 
@@ -83,11 +84,11 @@ export default class Stage extends Phaser.State {
 
 		// DEBUG Create a FPS Counter in the top left corner
 		this.fpsText = this.add.text(8, 8, 'FPS: 0', { font: "12px Arial",
-			fill: "#ffffff" });
+			fill: "#000000" });
 		this.windText = this.add.text(8, 24, 'Power: 100', { font: "12px Arial",
-			fill: "#ffffff" });
+			fill: "#000000" });
 		this.debugText = this.add.text(8, 56, '', { font: "12px Arial",
-			fill: "#ffffff" });
+			fill: "#000000" });
 
 		// Creates land bitmap data, scales it relative to the world size and 
 		// draws it on screen
@@ -145,7 +146,7 @@ export default class Stage extends Phaser.State {
 		this.lastState = false;
 		this.pLine = new Phaser.Line();
 		this.gLine = this.add.graphics(0,0);
-		this.gLine.lineStyle(3, 0xFFFFFF, 1);
+		this.gLine.lineStyle(3, 0x0000ff, 1);
 
 	}
 	
@@ -176,6 +177,7 @@ export default class Stage extends Phaser.State {
 
 		if (pointer.isDown && !this.lastState) // Pointer went down
 		{
+			// set pointer start to current pointer position
 			this.pLine.start = new Phaser.Point(pointer.x, pointer.y);
 			console.log("Pointer just went down");
 			
@@ -185,7 +187,7 @@ export default class Stage extends Phaser.State {
 			this.pLine.end = new Phaser.Point(pointer.x, pointer.y);
 			console.log("Pointer pressed");
 			this.gLine.clear();
-			this.gLine.lineStyle(3, 0xFFFFFF, 1);
+			this.gLine.lineStyle(3, 0x0000ff, 1);
 			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
 			this.currentPlayer.shotAngle = this.pLine.angle;
@@ -193,6 +195,7 @@ export default class Stage extends Phaser.State {
 		}
 		else if(!pointer.isDown && this.lastState) // Pointer went up
 		{
+			this.gLine.clear();
 			console.log("Pointer just went up");
 			console.info(this.pLine.start, this.pLine.end, this.pLine.angle, this.pLine.length);
 		}
