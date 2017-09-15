@@ -6,7 +6,7 @@ export default class Player extends Phaser.Sprite {
 
 		this.name = name;
 		this.health = 10;
-		this.shotAngle = -90;
+		this.shotAngle = -Math.PI / 2;
 		this.shotPower = 400;
 		this.leftSide = leftSide;
 		this.localPlayer = localPlayer;
@@ -26,7 +26,7 @@ export default class Player extends Phaser.Sprite {
 		let text = ''
 		text += 'name: ' + this.name + '\n';
 		text += 'health: ' + this.health + '\n';
-		text += 'shotAngle: ' + this.shotAngle + '\n';
+		text += 'shotAngle: ' + this.game.math.radToDeg(this.shotAngle) + '\n';
 		text += 'shotPower: ' + this.shotPower + '\n';
 		return text;
 	}
