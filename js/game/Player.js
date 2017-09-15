@@ -2,7 +2,7 @@ export default class Player extends Phaser.Sprite {
 	constructor(game, name, x = 0, y = 0, leftSide = true, localPlayer = true) {
 		super(game);
 
-		Phaser.Sprite.call(this, game, x, y, 'tank');
+		Phaser.Sprite.call(this, game, x, y, 'castle_red');
 
 		this.name = name;
 		this.health = 10;

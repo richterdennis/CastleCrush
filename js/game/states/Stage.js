@@ -17,7 +17,7 @@ export default class Stage extends Phaser.State {
 
 		this.background = null;
 		this.bullet = null;
-		this.cannon = null;
+		// this.cannon = null;
 		this.land = null;
 		this.arrow = null;
 
@@ -34,7 +34,7 @@ export default class Stage extends Phaser.State {
 		
 		// TODO: Hardcoded values need to be changed to values received from server
 		this.distanceFromSide = 200;
-		this.distanceFromBottom = 215;
+		this.distanceFromBottom = 213;
 		this.players = []
 		this.playerTurn = 0;
 		this.currentPlayer;
@@ -58,7 +58,9 @@ export default class Stage extends Phaser.State {
 		// preload assets
 		this.load.image('background', 'public/assets/background_sky.png');
 		this.load.image('tank', 'public/assets/tanks_tankGrey_body5.png');
-		this.load.image('turret', 'public/assets/tanks_turret3.png');
+		this.load.image('castle_blue', 'public/assets/BurgBlau.png');
+		this.load.image('castle_red', 'public/assets/BurgRot.png');
+		this.load.image('turret', 'public/assets/Kanone.png');
 		this.load.image('bullet', 'public/assets/tank_bullet2.png');
 		this.load.image('land', 'public/assets/land.png');
 		this.load.image('landscape', 'public/assets/landscape.png');
@@ -126,21 +128,17 @@ export default class Stage extends Phaser.State {
 				this.world.height - this.distanceFromBottom, false
 			)
 		];
+		this.players[0].scale.setTo(0.3, 0.3);
+		this.players[1].scale.setTo(0.3, 0.3);
+
 		this.add.existing(this.players[0]);
 		this.add.existing(this.players[1]);
 		
 		this.currentPlayer = this.players[0];
 
-
-		// TODO remove hardcoding and add cannon to Player Object
-		// create the cannon
-		this.cannon = this.add.sprite(this.players[0].x , this.players[0].y-this.players[0].height,
-			'turret');
-		this.cannon.anchor.setTo(-0.1, 0);
-
 		// Initialize power and angle values as their minvalues
 		this.power = this.minPower;
-		this.cannon.angle = -this.minAngle;
+		// this.cannon.angle = -this.minAngle;
 
 		// input
 		this.lastState = false;
@@ -203,27 +201,6 @@ export default class Stage extends Phaser.State {
 		}
 		this.lastState = pointer.isDown;
 
-
-
-
-		// TODO: Send Event to currentPlayer and wait for shot parameters
-		if (this.input.keyboard.isDown(Phaser.Keyboard.W) && 
-			this.currentPlayer.shotAngle > -this.maxAngle) {
-			this.currentPlayer.shotAngle -= 1;
-		}
-		else if (this.input.keyboard.isDown(Phaser.Keyboard.S) && 
-			this.currentPlayer.shotAngle < -this.minAngle) {
-			this.currentPlayer.shotAngle += 1;
-		}
-		if (this.input.keyboard.isDown(Phaser.Keyboard.D) && 
-			this.currentPlayer.shotPower < this.maxPower) {
-			this.currentPlayer.shotPower += 10;
-		}
-		else if (this.input.keyboard.isDown(Phaser.Keyboard.A) && 
-			this.currentPlayer.shotPower > this.minPower) {
-			this.currentPlayer.shotPower -= 10;
-		}
-
 		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			this.shooting();
 			this.gamestate = GAMESTATES.INFLIGHT;
@@ -243,15 +220,16 @@ export default class Stage extends Phaser.State {
 		if (this.bullet.exists) {
 			return;
 		}
-		this.bullet.reset(this.currentPlayer.x, this.currentPlayer.y);
+		this.bullet.reset(this.currentPlayer.x, this.currentPlayer.y-50);
 		this.bullet.exists = true;
 
+		console.log(this.currentPlayer.height);
 		var p = new Phaser.Point(this.currentPlayer.x, this.currentPlayer.y-this.currentPlayer.height);
 
 		// FIXME: direction
 		var rotation = this.currentPlayer.shotAngle;
 		console.log(this.currentPlayer.leftSide, 'rotation: ' + rotation);
-		p.rotate(p.x, p.y, rotation, false, this.cannon.width);
+		p.rotate(p.x, p.y, rotation, false, 0); // FIXME
 
 		// Add a force to the bullet
 		this.physics.arcade.velocityFromRotation(rotation, this.currentPlayer.shotPower,
