@@ -188,6 +188,8 @@ export default class Stage extends Phaser.State {
 			this.gLine.lineStyle(3, 0xFFFFFF, 1);
 			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
+			this.currentPlayer.shotAngle = this.math.radToDeg(this.pLine.angle);
+			this.currentPlayer.shotPower = this.pLine.length;
 		}
 		else if(!pointer.isDown && this.lastState) // Pointer went up
 		{
