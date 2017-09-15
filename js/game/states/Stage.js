@@ -198,6 +198,8 @@ export default class Stage extends Phaser.State {
 			this.gLine.clear();
 			console.log("Pointer just went up");
 			console.info(this.pLine.start, this.pLine.end, this.pLine.angle, this.pLine.length);
+			this.shooting();
+			this.gamestate = GAMESTATES.INFLIGHT;
 		}
 		this.lastState = pointer.isDown;
 
