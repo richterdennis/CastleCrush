@@ -8,6 +8,8 @@ const GAMESTATES = {
 
 const DIFFICULTY_WIND_MULTIPLIER = 50;
 
+const DEBUG = true;
+
 export default class Stage extends Phaser.State {
 
 	init() {
@@ -139,11 +141,17 @@ export default class Stage extends Phaser.State {
 		this.power = this.minPower;
 		this.cannon.angle = -this.minAngle;
 
+		// input
+		this.pStart = null;
+		this.pEnd = null;
+		this.lastState = false;
+
 	}
 	
 	update() {
-		this.updateDebugText();
-		
+		if (DEBUG)
+			this.updateDebugText();
+
 		if (this.gamestate === GAMESTATES.INPUT) {
 			this.playerInput();
 			this.updateShotIndicator();
@@ -163,6 +171,21 @@ export default class Stage extends Phaser.State {
 	}
 
 	playerInput() {
+		var pointer = this.input.activePointer;
+
+		if (pointer.isDown && !this.lastState) {
+			this.pStart = new Phaser.Point(pointer.x, pointer.y);
+			console.log("Pointer just went down");
+		}
+		else if(!pointer.isDown && this.lastState) {
+			this.pEnd = pointer.position;
+			console.log("Pointer just went up");
+			console.info(this.pStart, this.pEnd);
+		}
+		this.lastState = pointer.isDown;
+
+
+
 		// TODO: Send Event to currentPlayer and wait for shot parameters
 		if (this.input.keyboard.isDown(Phaser.Keyboard.W) && 
 			this.currentPlayer.shotAngle > -this.maxAngle) {
