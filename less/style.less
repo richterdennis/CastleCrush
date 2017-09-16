@@ -14,7 +14,7 @@ html, body, #view {
 body {
   background: url(../public/assets/landscape.png);
   background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background-size: cover;
 
   display: flex;
   justify-content: center;
@@ -39,9 +39,21 @@ body {
   @media (min-width: 1024px) {
     width: 1024px;
     max-height: 768px;
-    // box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     padding: 40px;
   }
+
+  @media (max-width: 450px) {
+    max-height: 768px;
+    background-image: url(../public/assets/mobileLandscape.png);
+    background-size: cover;
+  }
+
+  @media (max-width: 1024px) {
+    padding-top: 18%;
+    background-image: url(../public/assets/landscape.png);
+    background-size: cover;
+  }
+
 }
 
 #errorview {
