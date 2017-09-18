@@ -8,15 +8,58 @@
   padding-top: 2%;
 
   #logo {
-    widht: 800px;
-    height: 200px;
+    width: 450px;
+    height: 300px;
   }
 
   .btn {
     width: 200px;
-    margin: 5vh;
+    margin: 1vh;
   }
 
+  #setting {
+    position: absolute;
+    font-size: 8pt;
+    width: 100px;
+    left: 99%;
+    bottom: 88%;
+  }
+  // FullHD
+  @media (min-width: 1920px) {
+    max-height: 1080px;
+
+    .btn {
+      height: 50px;
+      width: 400px;
+      margin: 1vh;
+    }
+
+    #logo {
+      width: 700px;
+      height:500px;
+    }
+
+    #setting {
+      height: 40px;
+      font-size: 10pt;
+      width: 200px;
+      left: 99%;
+      bottom: 88%;
+    }
+
+  }
+  // Querformat Smartphone
+  @media (max-width: 1024px) {
+    max-height: 450px;
+    #setting {
+      position: absolute;
+      font-size: 8pt;
+      width: 100px;
+      left: 81%;
+      bottom: 71%;
+    }
+  }
+  // Smartphonesicht
   @media (max-width: 450px) {
     margin-top: 26%;
 
@@ -26,8 +69,39 @@
     }
 
     #logo {
+      width: 350px;
+      height:250px;
+    }
+
+    #setting {
+      position: absolute;
+      font-size: 8pt;
+      width: 100px;
+      left: 70%;
+      bottom: 90%;
+    }
+
+  }
+  // Smartphonesicht noch kleiner
+  @media (max-width: 325px) {
+    margin-top: 26%;
+
+    .btn {
       width: 200px;
-      height:200px;
+      margin: 2vh;
+    }
+
+    #setting {
+      position: absolute;
+      font-size: 8pt;
+      width: 100px;
+      left: 63%;
+      bottom: 90%;
+    }
+
+    #logo {
+      width: 300px;
+      height:250px;
     }
   }
 
