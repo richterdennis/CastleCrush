@@ -3,7 +3,7 @@ import StageState from './states/Stage'
 
 export default class Game extends Phaser.Game {
 	constructor(parentElement) {
-		super(1280, 720, Phaser.AUTO, parentElement);
+		super(1920, 1080, Phaser.AUTO, parentElement);
 
 		this.preload();
 	}
