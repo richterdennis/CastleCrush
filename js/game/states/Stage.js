@@ -17,7 +17,6 @@ export default class Stage extends Phaser.State {
 
 		this.background = null;
 		this.bullet = null;
-		// this.cannon = null;
 		this.land = null;
 		this.arrow = null;
 
@@ -61,7 +60,7 @@ export default class Stage extends Phaser.State {
 		this.load.image('castle_blue', 'public/assets/BurgBlau.png');
 		this.load.image('castle_red', 'public/assets/BurgRot.png');
 		this.load.image('turret', 'public/assets/Kanone.png');
-		this.load.image('bullet', 'public/assets/tank_bullet2.png');
+		this.load.image('bullet', 'public/assets/cannonball.png');
 		this.load.image('land', 'public/assets/land.png');
 		this.load.image('landscape', 'public/assets/landscape.png');
 		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
@@ -83,6 +82,7 @@ export default class Stage extends Phaser.State {
 			'bullet');
 		this.bullet.exists = false;
 		this.bullet.anchor.setTo(1,0.5);
+		this.bullet.scale.setTo(0.15);
 		this.physics.arcade.enable(this.bullet);
 
 		// DEBUG Create a FPS Counter in the top left corner
@@ -118,8 +118,8 @@ export default class Stage extends Phaser.State {
 
 		// ShotIndicator
 		this.g = this.add.graphics(100, 100);
-		this.g.lineStyle(3, 0xAA0000, 1);
-		this.g.lineTo(150, 0);
+		this.g.lineStyle(5, 0xAA0000, 1);
+		this.g.lineTo(200, 0);
 
 		// Create the players and put them into position
 		this.players = [
@@ -213,11 +213,6 @@ export default class Stage extends Phaser.State {
 			this.gamestate = GAMESTATES.INFLIGHT;
 		}
 		this.lastState = pointer.isDown;
-
-		if (this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			this.shooting();
-			this.gamestate = GAMESTATES.INFLIGHT;
-		}
 	}
 	updateDebugText() {
 		var fps = Math.round(1000 / this.time.elapsedMS);
@@ -233,7 +228,7 @@ export default class Stage extends Phaser.State {
 		if (this.bullet.exists) {
 			return;
 		}
-		this.bullet.reset(this.currentPlayer.turret.worldPosition.x, this.currentPlayer.turret.worldPosition.y-50);
+		this.bullet.reset(this.currentPlayer.turret.worldPosition.x, this.currentPlayer.turret.worldPosition.y);
 		this.bullet.exists = true;
 
 		console.log(this.currentPlayer.height);
@@ -301,8 +296,8 @@ export default class Stage extends Phaser.State {
 	}
 
 	updateShotIndicator() {
-		this.g.x = this.currentPlayer.x
-		this.g.y = this.currentPlayer.y - this.currentPlayer.height;
+		this.g.x = this.currentPlayer.turret.worldPosition.x;
+		this.g.y = this.currentPlayer.turret.worldPosition.y;
     	this.g.rotation = this.currentPlayer.shotAngle;
 	}
 
