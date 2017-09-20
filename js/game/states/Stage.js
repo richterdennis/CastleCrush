@@ -9,6 +9,7 @@ const GAMESTATES = {
 const DIFFICULTY_WIND_MULTIPLIER = 50;
 
 const DEBUG = true;
+const DEBUGPHYSICS = false;
 
 export default class Stage extends Phaser.State {
 
@@ -81,7 +82,7 @@ export default class Stage extends Phaser.State {
 		this.bullet = this.add.sprite(this.world.centerX,this.world.centerY,
 			'bullet');
 		this.bullet.exists = false;
-		this.bullet.anchor.setTo(1,0.5);
+		this.bullet.anchor.setTo(0.5,0.5);
 		this.bullet.scale.setTo(0.15);
 		this.physics.arcade.enable(this.bullet);
 
@@ -118,7 +119,7 @@ export default class Stage extends Phaser.State {
 
 		// ShotIndicator
 		this.g = this.add.graphics(100, 100);
-		this.g.lineStyle(5, 0xAA0000, 1);
+		this.g.lineStyle(5, 0xFFFFFF, 1);
 		this.g.lineTo(200, 0);
 
 		// Create the players and put them into position
@@ -127,13 +128,16 @@ export default class Stage extends Phaser.State {
 				this.game,
 				this.options.players[0], 
 				this.distanceFromSide,
-				this.world.height - this.distanceFromBottom
+				this.world.height - this.distanceFromBottom,
+				'castle_blue'
 			),
 			new Player(
 				this.game,
 				this.options.players[1],
 				this.world.width - this.distanceFromSide,
-				this.world.height - this.distanceFromBottom, false
+				this.world.height - this.distanceFromBottom,
+				'castle_red',
+				false
 			)
 		];
 		this.players.forEach((player) => {
@@ -159,9 +163,12 @@ export default class Stage extends Phaser.State {
 	update() {
 		if (DEBUG) {
 			this.updateDebugText();
-			// this.game.debug.body(this.players[0]);
-			// this.game.debug.body(this.players[1]);
-			// this.game.debug.body(this.bullet);
+		}
+		if (DEBUGPHYSICS)
+		{
+			this.game.debug.body(this.players[0]);
+			this.game.debug.body(this.players[1]);
+			this.game.debug.body(this.bullet);
 		}
 
 		if (this.gamestate === GAMESTATES.INPUT) {
