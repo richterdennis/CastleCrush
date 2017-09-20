@@ -33,7 +33,7 @@ export default class Stage extends Phaser.State {
 		this.game.renderer.renderSession.roundPixels = true;
 		
 		// TODO: Hardcoded values need to be changed to values received from server
-		this.distanceFromSide = 200;
+		this.distanceFromSide = 300;
 		this.distanceFromBottom = 300;
 		this.players = []
 		this.playerTurn = 0;
@@ -166,7 +166,7 @@ export default class Stage extends Phaser.State {
 
 
 		// TODO: Fix dis shit
-		if (y === this.currentPlayer)
+		//if (y === this.currentPlayer)
 			//return;
 
 		this.explode();
