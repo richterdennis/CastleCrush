@@ -21,7 +21,7 @@ export default class Stage extends Phaser.State {
 		this.land = null;
 		this.arrow = null;
 
-		this.blastRadius = 15;
+		this.blastRadius = 50;
 
 		// Player shooting Power and angle bounds
 		this.minPower = 250;
@@ -34,7 +34,7 @@ export default class Stage extends Phaser.State {
 		
 		// TODO: Hardcoded values need to be changed to values received from server
 		this.distanceFromSide = 200;
-		this.distanceFromBottom = 213;
+		this.distanceFromBottom = 300;
 		this.players = []
 		this.playerTurn = 0;
 		this.currentPlayer;
@@ -65,6 +65,7 @@ export default class Stage extends Phaser.State {
 		this.load.image('land', 'public/assets/land.png');
 		this.load.image('landscape', 'public/assets/landscape.png');
 		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
+		this.load.image('wheel', 'public/assets/Rad.png');
 	}
 
 	create() {
@@ -85,11 +86,11 @@ export default class Stage extends Phaser.State {
 		this.physics.arcade.enable(this.bullet);
 
 		// DEBUG Create a FPS Counter in the top left corner
-		this.fpsText = this.add.text(8, 8, 'FPS: 0', { font: "12px Arial",
+		this.fpsText = this.add.text(8, 8, '', { font: "30px Arial",
 			fill: "#000000" });
-		this.windText = this.add.text(8, 24, 'Power: 100', { font: "12px Arial",
+		this.windText = this.add.text(8, 46, '', { font: "30px Arial",
 			fill: "#000000" });
-		this.debugText = this.add.text(8, 56, '', { font: "12px Arial",
+		this.debugText = this.add.text(8, 84, '', { font: "30px Arial",
 			fill: "#000000" });
 
 		// Creates land bitmap data, scales it relative to the world size and 
@@ -98,20 +99,27 @@ export default class Stage extends Phaser.State {
 		this.land.draw('land');
 		this.land.update();
 		this.landScaling = this.world.width/ this.land.width; // assumes 16:9
-		this.land.addToWorld(0,0,0,0, this.landScaling, this.landScaling);
+
+		// Convert to sprite to enable collision detection
+		this.landSprite = this.add.sprite(0,0, this.land);
+		this.landSprite.scale.setTo(this.landScaling);
+		// this.physics.arcade.enable(this.landSprite);
+		// this.landSprite.body.allowGravity = false;
+		console.log("Added land with scaling: ", this.landScaling);
 		
 		// Indicator arrow
 		this.arrow = this.add.image(0,10, 'arrow')
 		this.arrow.anchor.setTo(1,0.5);
-		this.arrow.width = 0.5 * this.arrow.width;
-		this.arrow.height = 0.5 * this.arrow.height;
+		this.arrow.scale.setTo(this.landScaling);
+		// this.arrow.width = 0.5 * this.arrow.width;
+		// this.arrow.height = 0.5 * this.arrow.height;
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
 		// ShotIndicator
 		this.g = this.add.graphics(100, 100);
 		this.g.lineStyle(3, 0xAA0000, 1);
-		this.g.lineTo(100, 0);
+		this.g.lineTo(150, 0);
 
 		// Create the players and put them into position
 		this.players = [
@@ -128,29 +136,33 @@ export default class Stage extends Phaser.State {
 				this.world.height - this.distanceFromBottom, false
 			)
 		];
-		this.players[0].scale.setTo(0.3, 0.3);
-		this.players[1].scale.setTo(0.3, 0.3);
-
-		this.add.existing(this.players[0]);
-		this.add.existing(this.players[1]);
+		this.players.forEach((player) => {
+			player.scale.setTo(0.6 * this.landScaling);
+			this.physics.arcade.enable(player);
+			this.add.existing(player);
+			player.body.allowGravity = false;
+		})
 		
 		this.currentPlayer = this.players[0];
 
-		// Initialize power and angle values as their minvalues
-		this.power = this.minPower;
-		// this.cannon.angle = -this.minAngle;
-
-		// input
+		// line display for touch controls
 		this.lastState = false;
 		this.pLine = new Phaser.Line();
 		this.gLine = this.add.graphics(0,0);
 		this.gLine.lineStyle(3, 0x0000ff, 1);
+	}
 
+	testFunc(x,y) {
+		console.log(x,y)
 	}
 	
 	update() {
-		if (DEBUG)
+		if (DEBUG) {
 			this.updateDebugText();
+			// this.game.debug.body(this.players[0]);
+			// this.game.debug.body(this.players[1]);
+			// this.game.debug.body(this.bullet);
+		}
 
 		if (this.gamestate === GAMESTATES.INPUT) {
 			this.playerInput();
@@ -158,6 +170,7 @@ export default class Stage extends Phaser.State {
 		}
 		else if (this.gamestate === GAMESTATES.INFLIGHT) {
 			this.bulletVsLand();
+			this.physics.arcade.overlap(this.bullet, this.players[0], this.testFunc, null, this);
 		} 
 		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
 			// recalculate wind check gameoverstate
@@ -266,7 +279,7 @@ export default class Stage extends Phaser.State {
 
 			// Carve out a circular shape with set radius 
 			this.land.blendDestinationOut();
-			this.land.circle(x,y, 40 / this.landScaling, 'rgba(0,0,0,255)');
+			this.land.circle(x,y, this.blastRadius / this.landScaling, 'rgba(0,0,0,255)');
 			this.land.blendReset();
 			this.land.update();
 			this.land.dirty = true;
@@ -292,4 +305,6 @@ export default class Stage extends Phaser.State {
 		this.g.y = this.currentPlayer.y - this.currentPlayer.height;
     	this.g.rotation = this.currentPlayer.shotAngle;
 	}
+
+
 }

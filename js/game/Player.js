@@ -11,6 +11,18 @@ export default class Player extends Phaser.Sprite {
 		this.leftSide = leftSide;
 		this.localPlayer = localPlayer;
 
+		// add turret and wheel
+		this.turret = new Phaser.Sprite(game, 0,-this.height+60, 'turret');
+		this.wheel = new Phaser.Sprite(game,-50,-this.height+60, 'wheel');
+		this.addChild(this.turret);
+		this.addChild(this.wheel);
+		this.children.forEach(child => {
+			game.physics.arcade.enable(child);
+			child.body.allowGravity = false;
+		});
+		this.turret.anchor.setTo(0.5, 0.5)
+
+
 		this.anchor.setTo(0.5, 1);
 		if (!leftSide)
 			this.scale.x *= -1;
@@ -20,6 +32,11 @@ export default class Player extends Phaser.Sprite {
 
 	init() {
 		console.log(this.name + " was created");
+		console.log(this.turret);
+	}
+
+	update() {
+		this.turret.rotation = this.shotAngle;
 	}
 
 	toString() {
