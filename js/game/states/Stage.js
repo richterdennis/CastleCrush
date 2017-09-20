@@ -66,6 +66,10 @@ export default class Stage extends Phaser.State {
 		this.load.image('landscape', 'public/assets/landscape.png');
 		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
 		this.load.image('wheel', 'public/assets/Rad.png');
+
+		this.load.audio('sound_shot', 'public/assets/shot.wav');
+		this.load.audio('sound_explosion', 'public/assets/explosion.wav');
+
 	}
 
 	create() {
@@ -154,6 +158,10 @@ export default class Stage extends Phaser.State {
 		this.pLine = new Phaser.Line();
 		this.gLine = this.add.graphics(0,0);
 		this.gLine.lineStyle(3, 0x0000ff, 1);
+
+		this.sound.volume = 0.2;
+		this.sound.add('sound_shot');
+		this.sound.add('sound_explosion');
 	}
 
 	testFunc(x,y) {
@@ -252,6 +260,8 @@ export default class Stage extends Phaser.State {
 
 		// And rotate the bullet towards its current velocity vector
 		this.bullet.rotation = this.bullet.body.angle;
+
+		this.sound.play('sound_shot');
 	}
 
 	bulletVsLand() {
@@ -294,6 +304,7 @@ export default class Stage extends Phaser.State {
 	explode() {
 		let p = new Phaser.Point(this.bullet.x, this.bullet.y);
 		console.log("Land was hit at: ", p);
+		this.sound.play('sound_explosion');
 	}
 	removeBullet() {
 		console.log('bullet removed');
