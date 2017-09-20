@@ -1,8 +1,13 @@
 export default class Player extends Phaser.Sprite {
-	constructor(game, name, x = 0, y = 0, leftSide = true, localPlayer = true) {
+	constructor(game, name, x = 0, y = 0, key, leftSide = true, localPlayer = true) {
 		super(game);
+		this.castle = new Phaser.Sprite(game, 0, 0, key);
+		this.castle.anchor.setTo(0.5, 1)
 
-		Phaser.Sprite.call(this, game, x, y, 'castle_red');
+		Phaser.Sprite.call(this, game, x, y);
+		this.resizeFrame(null, this.castle.width, this.castle.height);
+		this.width = this.castle.width;
+		this.height = this.castle.height;
 
 		this.name = name;
 		this.health = 10;
@@ -16,12 +21,12 @@ export default class Player extends Phaser.Sprite {
 		this.wheel = new Phaser.Sprite(game,-50,-this.height+60, 'wheel');
 		this.addChild(this.turret);
 		this.addChild(this.wheel);
+		this.addChild(this.castle);
 		this.children.forEach(child => {
 			game.physics.arcade.enable(child);
 			child.body.allowGravity = false;
 		});
-		this.turret.anchor.setTo(0.5, 0.5)
-
+		this.turret.anchor.setTo(0.5, 0.5);
 
 		this.anchor.setTo(0.5, 1);
 		if (!leftSide)
