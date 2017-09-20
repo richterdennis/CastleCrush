@@ -153,7 +153,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	testFunc(x,y) {
-		console.log(x,y)
+		console.log("A direct hit! " + (y.leftSide ? "Left" : "Right") + " Player was hit!");
 	}
 	
 	update() {
@@ -170,7 +170,7 @@ export default class Stage extends Phaser.State {
 		}
 		else if (this.gamestate === GAMESTATES.INFLIGHT) {
 			this.bulletVsLand();
-			this.physics.arcade.overlap(this.bullet, this.players[0], this.testFunc, null, this);
+			this.physics.arcade.overlap(this.bullet, this.players, this.testFunc, null, this);
 		} 
 		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
 			// recalculate wind check gameoverstate
@@ -198,7 +198,7 @@ export default class Stage extends Phaser.State {
 			this.pLine.end = new Phaser.Point(pointer.x, pointer.y);
 			console.log("Pointer pressed");
 			this.gLine.clear();
-			this.gLine.lineStyle(3, 0x0000ff, 1);
+			this.gLine.lineStyle(6, 0x0000ff, 1);
 			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
 			this.currentPlayer.shotAngle = this.pLine.angle;
@@ -233,7 +233,7 @@ export default class Stage extends Phaser.State {
 		if (this.bullet.exists) {
 			return;
 		}
-		this.bullet.reset(this.currentPlayer.x, this.currentPlayer.y-50);
+		this.bullet.reset(this.currentPlayer.turret.worldPosition.x, this.currentPlayer.turret.worldPosition.y-50);
 		this.bullet.exists = true;
 
 		console.log(this.currentPlayer.height);
