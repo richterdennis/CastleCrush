@@ -9,7 +9,7 @@ const GAMESTATES = {
 const DIFFICULTY_WIND_MULTIPLIER = 50;
 
 const DEBUG = true;
-const DEBUGPHYSICS = false;
+const DEBUGPHYSICS = true;
 
 export default class Stage extends Phaser.State {
 
@@ -103,21 +103,17 @@ export default class Stage extends Phaser.State {
 		this.land = this.add.bitmapData(1920, 1080);
 		this.land.draw('land');
 		this.land.update();
-		this.landScaling = this.world.width/ this.land.width; // assumes 16:9
+		this.landScaling = this.world.width / this.land.width; // assumes 16:9
 
 		// Convert to sprite to enable collision detection
 		this.landSprite = this.add.sprite(0,0, this.land);
 		this.landSprite.scale.setTo(this.landScaling);
-		// this.physics.arcade.enable(this.landSprite);
-		// this.landSprite.body.allowGravity = false;
 		console.log("Added land with scaling: ", this.landScaling);
 		
 		// Indicator arrow
 		this.arrow = this.add.image(0,10, 'arrow')
 		this.arrow.anchor.setTo(1,0.5);
 		this.arrow.scale.setTo(this.landScaling);
-		// this.arrow.width = 0.5 * this.arrow.width;
-		// this.arrow.height = 0.5 * this.arrow.height;
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
@@ -148,6 +144,7 @@ export default class Stage extends Phaser.State {
 			player.scale.setTo(0.6 * this.landScaling);
 			this.physics.arcade.enable(player);
 			this.add.existing(player);
+			player.body.setSize(player.castle.width, player.castle.height-110, 0, 110);
 			player.body.allowGravity = false;
 		})
 		
@@ -166,6 +163,16 @@ export default class Stage extends Phaser.State {
 
 	testFunc(x,y) {
 		console.log("A direct hit! " + (y.leftSide ? "Left" : "Right") + " Player was hit!");
+
+
+		// TODO: Fix dis shit
+		if (y === this.currentPlayer)
+			//return;
+
+		this.explode();
+		this.removeBullet();
+		y.health -=1;
+		console.log("damage dealt");
 	}
 	
 	update() {
