@@ -50,7 +50,7 @@ export default class Player extends Phaser.Sprite {
 	}
 
 	isAlive() {
-		return this.health <= 0;
+		return this.health > 0;
 	}
 
 	toString() {
