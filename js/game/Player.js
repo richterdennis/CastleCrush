@@ -10,7 +10,7 @@ export default class Player extends Phaser.Sprite {
 		this.height = this.castle.height;
 
 		this.name = name;
-		this.health = 1;
+		this.health = 15;
 		this.shotAngle = -Math.PI / 2;
 		this.shotPower = 400;
 		this.leftSide = leftSide;
