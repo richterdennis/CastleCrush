@@ -3,6 +3,7 @@ import Player from '../Player.js'
 const GAMESTATES = {
 	INPUT: 'input',
 	INFLIGHT: 'inflight',
+	CHECKSTATE: 'checkstate',
 	BETWEENTURN: 'betweenturn'
 };
 
@@ -191,6 +192,15 @@ export default class Stage extends Phaser.State {
 			this.bulletVsLand();
 			this.physics.arcade.overlap(this.bullet, this.players, this.bulletHitsCastle, null, this);
 		} 
+		else if (this.gamestate === GAMESTATES.CHECKSTATE) {
+			if (this.players.every(p => p.isAlive())) {
+				this.gamestate = GAMESTATES.BETWEENTURN;
+				return;
+			}
+			// GAMEOVER
+			console.log('Game Over');
+			
+		}
 		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
 			// recalculate wind check gameoverstate
 			this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
@@ -314,7 +324,7 @@ export default class Stage extends Phaser.State {
 		console.log('bullet removed');
 		this.bullet.exists = false;
 		this.arrow.exists = false;
-		this.gamestate = GAMESTATES.BETWEENTURN;
+		this.gamestate = GAMESTATES.CHECKSTATE;
 	}
 
 	updateShotIndicator() {
