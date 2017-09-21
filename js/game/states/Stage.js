@@ -7,6 +7,7 @@ const GAMESTATES = {
 };
 
 const DIFFICULTY_WIND_MULTIPLIER = 50;
+const GRAVITY = 500;
 
 const DEBUG = true;
 const DEBUGPHYSICS = true;
@@ -49,7 +50,7 @@ export default class Stage extends Phaser.State {
 
 		// set Arcade physics
 		this.physics.startSystem(Phaser.Physics.ARCADE);
-		this.physics.arcade.gravity.y = 300;
+		this.physics.arcade.gravity.y = GRAVITY;
 		this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 	}
 
@@ -161,18 +162,14 @@ export default class Stage extends Phaser.State {
 		this.sound.add('sound_explosion');
 	}
 
-	testFunc(x,y) {
-		console.log("A direct hit! " + (y.leftSide ? "Left" : "Right") + " Player was hit!");
-
-
-		// TODO: Fix dis shit
-		//if (y === this.currentPlayer)
-			//return;
+	bulletHitsCastle(bullet, player) {
+		var damage = 10; // TODO: dynamic damage values?
 
 		this.explode();
 		this.removeBullet();
-		y.health -=1;
-		console.log("damage dealt");
+		player.takeDamage(damage); 
+
+		console.log(player.name + " was hit for " + damage + " damage!");
 	}
 	
 	update() {
@@ -192,7 +189,7 @@ export default class Stage extends Phaser.State {
 		}
 		else if (this.gamestate === GAMESTATES.INFLIGHT) {
 			this.bulletVsLand();
-			this.physics.arcade.overlap(this.bullet, this.players, this.testFunc, null, this);
+			this.physics.arcade.overlap(this.bullet, this.players, this.bulletHitsCastle, null, this);
 		} 
 		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
 			// recalculate wind check gameoverstate
