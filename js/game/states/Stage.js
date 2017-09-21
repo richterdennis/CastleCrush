@@ -1,6 +1,7 @@
 import Player from '../Player.js'
 
 const GAMESTATES = {
+	WAITING: 'waiting',
 	INPUT: 'input',
 	INFLIGHT: 'inflight',
 	CHECKSTATE: 'checkstate',
@@ -10,9 +11,10 @@ const GAMESTATES = {
 const DIFFICULTY_WIND_MULTIPLIER = 50;
 const GRAVITY = 500;
 const SHOT_CANCEL_DISTANCE = 200;
+const DEFAULT_DELAY = 1;
 
 const DEBUG = true;
-const DEBUGPHYSICS = true;
+const DEBUGPHYSICS = false;
 
 export default class Stage extends Phaser.State {
 
@@ -185,7 +187,9 @@ export default class Stage extends Phaser.State {
 			this.game.debug.body(this.bullet);
 		}
 
-		if (this.gamestate === GAMESTATES.INPUT) {
+		if (this.gamestate === GAMESTATES.WAITING)
+			return;
+		else if (this.gamestate === GAMESTATES.INPUT) {
 			this.playerInput();
 			this.updateShotIndicator();
 		}
@@ -210,7 +214,8 @@ export default class Stage extends Phaser.State {
 			console.log('Next Player: ' + this.playerTurn);
 			this.currentPlayer = this.players[this.playerTurn];
 
-			this.gamestate = GAMESTATES.INPUT;
+			//this.gamestate = GAMESTATES.INPUT;
+			this.proceedToStateInSeconds(GAMESTATES.INPUT, 2);
 		}
 	}
 
@@ -343,5 +348,12 @@ export default class Stage extends Phaser.State {
     	this.g.rotation = this.currentPlayer.shotAngle;
 	}
 
+	proceedToStateInSeconds(gamestate, seconds = DEFAULT_DELAY) {
+		this.gamestate = GAMESTATES.WAITING;
+		this.time.events.add(Phaser.Timer.SECOND * seconds, this.proceedToState, this, gamestate);
+	}
 
+	proceedToState(gamestate) {
+		this.gamestate = gamestate;
+	}
 }
