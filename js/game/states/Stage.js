@@ -9,6 +9,7 @@ const GAMESTATES = {
 
 const DIFFICULTY_WIND_MULTIPLIER = 50;
 const GRAVITY = 500;
+const SHOT_CANCEL_DISTANCE = 200;
 
 const DEBUG = true;
 const DEBUGPHYSICS = true;
@@ -199,6 +200,7 @@ export default class Stage extends Phaser.State {
 			}
 			// GAMEOVER
 			console.log('Game Over');
+			this.state.start('Boot');
 			
 		}
 		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
@@ -224,12 +226,16 @@ export default class Stage extends Phaser.State {
 		}
 		else if (pointer.isDown && this.lastState) // Pointer is down
 		{
+			console.log("Pointer held");
+
 			this.pLine.end = new Phaser.Point(pointer.x, pointer.y);
-			console.log("Pointer pressed");
+			var lineColor = (this.pLine.length > SHOT_CANCEL_DISTANCE) ? 0x0000FF : 0xFF0000;
+
 			this.gLine.clear();
-			this.gLine.lineStyle(6, 0x0000ff, 1);
+			this.gLine.lineStyle(6, lineColor, 1);
 			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
+
 			this.currentPlayer.shotAngle = this.pLine.angle;
 			this.currentPlayer.shotPower = this.pLine.length;
 		}
@@ -238,8 +244,12 @@ export default class Stage extends Phaser.State {
 			this.gLine.clear();
 			console.log("Pointer just went up");
 			console.info(this.pLine.start, this.pLine.end, this.pLine.angle, this.pLine.length);
-			this.shooting();
-			this.gamestate = GAMESTATES.INFLIGHT;
+
+			if (this.pLine.length > SHOT_CANCEL_DISTANCE)
+			{
+				this.shooting();
+				this.gamestate = GAMESTATES.INFLIGHT;
+			}
 		}
 		this.lastState = pointer.isDown;
 	}
