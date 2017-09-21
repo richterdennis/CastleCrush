@@ -44,6 +44,15 @@ export default class Player extends Phaser.Sprite {
 		this.turret.rotation = this.shotAngle;
 	}
 
+	takeDamage(damage) {
+		this.health -= damage;
+		return this.health;
+	}
+
+	isAlive() {
+		return this.health <= 0;
+	}
+
 	toString() {
 		let text = ''
 		text += 'name: ' + this.name + '\n';
