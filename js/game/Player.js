@@ -14,7 +14,7 @@ export default class Player extends Phaser.Sprite {
 		this.shotAngle = -Math.PI / 2;
 		this.shotPower = 400;
 		this.leftSide = leftSide;
-		this.localPlayer = localPlayer;
+		this.isLocalPlayer = localPlayer;
 
 		// add turret and wheel
 		this.turret = new Phaser.Sprite(game, 0,-this.height+60, 'turret');

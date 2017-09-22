@@ -5,7 +5,8 @@ const GAMESTATES = {
 	INPUT: 'input',
 	INFLIGHT: 'inflight',
 	CHECKSTATE: 'checkstate',
-	BETWEENTURN: 'betweenturn'
+	BETWEENTURN: 'betweenturn',
+	GAMEOVER: 'gameover'
 };
 
 const DIFFICULTY_WIND_MULTIPLIER = 50;
@@ -18,6 +19,40 @@ const DEBUGPHYSICS = false;
 
 export default class Stage extends Phaser.State {
 
+	preload() {
+		var WebFontConfig = {
+
+		    //  'active' means all requested fonts have finished loading
+		    //  We set a 1 second delay before calling 'createText'.
+		    //  For some reason if we don't the browser cannot render the text the first time it's created.
+		    active: function() { console.log("Google Webfont loaded!"); },
+
+		    //  The Google Fonts we want to load (specify as many as you like in the array)
+		    google: {
+		      families: ['Revalia']
+		    }
+
+		};
+		// TODO: Fontloading
+		this.load.script('webfont', 'http://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+
+		// preload assets
+		this.load.image('background', 'public/assets/background_sky.png');
+		this.load.image('tank', 'public/assets/tanks_tankGrey_body5.png');
+		this.load.image('castle_blue', 'public/assets/BurgBlau.png');
+		this.load.image('castle_red', 'public/assets/BurgRot.png');
+		this.load.image('turret', 'public/assets/Kanone.png');
+		this.load.image('bullet', 'public/assets/cannonball.png');
+		this.load.image('land', 'public/assets/land.png');
+		this.load.image('landscape', 'public/assets/landscape.png');
+		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
+		this.load.image('wheel', 'public/assets/Rad.png');
+
+		this.load.audio('sound_shot', 'public/assets/shot.wav');
+		this.load.audio('sound_explosion', 'public/assets/explosion.wav');
+
+	}
+
 	init() {
 		this.gamestate = GAMESTATES.INPUT;
 
@@ -29,10 +64,10 @@ export default class Stage extends Phaser.State {
 		this.blastRadius = 50;
 
 		// Player shooting Power and angle bounds
-		this.minPower = 250;
+		this.minPower = 200;
 		this.maxPower = 1000;
-		this.minAngle = 10;
-		this.maxAngle = 170;
+		this.minAngle = -Math.PI;
+		this.maxAngle = 0;
 
 		// disable texture filtering
 		this.game.renderer.renderSession.roundPixels = true;
@@ -58,25 +93,6 @@ export default class Stage extends Phaser.State {
 		this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 	}
 
-	preload() {
-
-		// preload assets
-		this.load.image('background', 'public/assets/background_sky.png');
-		this.load.image('tank', 'public/assets/tanks_tankGrey_body5.png');
-		this.load.image('castle_blue', 'public/assets/BurgBlau.png');
-		this.load.image('castle_red', 'public/assets/BurgRot.png');
-		this.load.image('turret', 'public/assets/Kanone.png');
-		this.load.image('bullet', 'public/assets/cannonball.png');
-		this.load.image('land', 'public/assets/land.png');
-		this.load.image('landscape', 'public/assets/landscape.png');
-		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
-		this.load.image('wheel', 'public/assets/Rad.png');
-
-		this.load.audio('sound_shot', 'public/assets/shot.wav');
-		this.load.audio('sound_explosion', 'public/assets/explosion.wav');
-
-	}
-
 	create() {
 		console.log("Stage loaded.");
 
@@ -96,12 +112,13 @@ export default class Stage extends Phaser.State {
 		this.physics.arcade.enable(this.bullet);
 
 		// DEBUG Create a FPS Counter in the top left corner
-		this.fpsText = this.add.text(8, 8, '', { font: "30px Arial",
+		this.fpsText = this.add.text(8, 8, '', { font: "24px Arial",
 			fill: "#000000" });
-		this.windText = this.add.text(8, 46, '', { font: "30px Arial",
+		this.windText = this.add.text(8, 36, '', { font: "24px Arial",
 			fill: "#000000" });
-		this.debugText = this.add.text(8, 84, '', { font: "30px Arial",
+		this.debugText = this.add.text(8, 64, '', { font: "24px Arial",
 			fill: "#000000" });
+		
 
 		// Creates land bitmap data, scales it relative to the world size and 
 		// draws it on screen
@@ -161,19 +178,17 @@ export default class Stage extends Phaser.State {
 		this.gLine = this.add.graphics(0,0);
 		this.gLine.lineStyle(3, 0x0000ff, 1);
 
-		this.sound.volume = 0.2;
+		var font = {
+			font: "50px Roboto",
+			fill: "#FFFFFF" 
+		};
+
+		this.shotInfoText = this.add.text(-100, -100, '', font);
+		this.gameInfoText = this.add.text(-100, -100, '', font);
+
+		this.sound.volume = 0.05;
 		this.sound.add('sound_shot');
 		this.sound.add('sound_explosion');
-	}
-
-	bulletHitsCastle(bullet, player) {
-		var damage = 10; // TODO: dynamic damage values?
-
-		this.explode();
-		this.removeBullet();
-		player.takeDamage(damage); 
-
-		console.log(player.name + " was hit for " + damage + " damage!");
 	}
 	
 	update() {
@@ -187,35 +202,43 @@ export default class Stage extends Phaser.State {
 			this.game.debug.body(this.bullet);
 		}
 
-		if (this.gamestate === GAMESTATES.WAITING)
-			return;
-		else if (this.gamestate === GAMESTATES.INPUT) {
-			this.playerInput();
-			this.updateShotIndicator();
-		}
-		else if (this.gamestate === GAMESTATES.INFLIGHT) {
-			this.bulletVsLand();
-			this.physics.arcade.overlap(this.bullet, this.players, this.bulletHitsCastle, null, this);
-		} 
-		else if (this.gamestate === GAMESTATES.CHECKSTATE) {
-			if (this.players.every(p => p.isAlive())) {
-				this.gamestate = GAMESTATES.BETWEENTURN;
-				return;
-			}
-			// GAMEOVER
-			console.log('Game Over');
-			this.state.start('Boot');
-			
-		}
-		else if (this.gamestate === GAMESTATES.BETWEENTURN) {
-			// recalculate wind check gameoverstate
-			this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
-			this.playerTurn = (this.playerTurn + 1) % this.players.length;
-			console.log('Next Player: ' + this.playerTurn);
-			this.currentPlayer = this.players[this.playerTurn];
+		switch (this.gamestate) {
+			case GAMESTATES.WAITING:
+				break;
 
-			//this.gamestate = GAMESTATES.INPUT;
-			this.proceedToStateInSeconds(GAMESTATES.INPUT, 2);
+			case GAMESTATES.INPUT:
+				if (this.currentPlayer.isLocalPlayer)
+					this.playerInput();
+				else {} // Do Networkevent stuff
+				this.updateShotIndicator();
+				break;
+
+			case GAMESTATES.INFLIGHT:
+				this.bulletVsLand();
+				this.physics.arcade.overlap(this.bullet, this.players, this.bulletHitsCastle, null, this);
+				break;
+
+			case GAMESTATES.BETWEENTURN:
+				// recalculate wind check gameoverstate
+				this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+				this.playerTurn = (this.playerTurn + 1) % this.players.length;
+				console.log('Next Player: ' + this.playerTurn);
+				this.currentPlayer = this.players[this.playerTurn];
+
+				//this.gamestate = GAMESTATES.INPUT;
+				this.proceedToStateInSeconds(GAMESTATES.INPUT, .5);
+				break;
+
+			case GAMESTATES.CHECKSTATE:
+				if (this.players.every(p => p.isAlive()))
+					this.gamestate = GAMESTATES.BETWEENTURN;
+				else this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, .5);
+				break;
+
+			case GAMESTATES.GAMEOVER:
+				console.log('Game Over');
+				this.state.start('Boot');
+				break;
 		}
 	}
 
@@ -234,36 +257,52 @@ export default class Stage extends Phaser.State {
 			console.log("Pointer held");
 
 			this.pLine.end = new Phaser.Point(pointer.x, pointer.y);
-			var lineColor = (this.pLine.length > SHOT_CANCEL_DISTANCE) ? 0x0000FF : 0xFF0000;
+			this.validShot = this.pLine.length > SHOT_CANCEL_DISTANCE 
+				&& (this.pLine.angle >= this.minAngle && this.pLine.angle <= this.maxAngle);
+			var lineColor = (this.validShot) ? 0x0000FF : 0xFF0000;
 
 			this.gLine.clear();
 			this.gLine.lineStyle(6, lineColor, 1);
 			this.gLine.moveTo(this.pLine.start.x, this.pLine.start.y);
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
 
-			this.currentPlayer.shotAngle = this.pLine.angle;
-			this.currentPlayer.shotPower = this.pLine.length;
+			this.currentPlayer.shotAngle = this.math.clamp(this.pLine.angle, this.minAngle, this.maxAngle);
+			this.currentPlayer.shotPower = this.math.clamp(this.pLine.length, this.minPower, this.maxPower);
+
+			this.updateShotInfoDisplay();
 		}
 		else if(!pointer.isDown && this.lastState) // Pointer went up
 		{
 			this.gLine.clear();
 			console.log("Pointer just went up");
 			console.info(this.pLine.start, this.pLine.end, this.pLine.angle, this.pLine.length);
+			console.log(Math.abs(this.pLine.angle+this.math.HALF_PI));
 
-			if (this.pLine.length > SHOT_CANCEL_DISTANCE)
+			if (this.validShot)
 			{
 				this.shooting();
 				this.gamestate = GAMESTATES.INFLIGHT;
 			}
+			this.shotInfoText.text = '';
 		}
 		this.lastState = pointer.isDown;
 	}
+
+	updateShotInfoDisplay() {
+		this.shotInfoText.text = Math.round(Math.abs(this.math.radToDeg(this.currentPlayer.shotAngle)))
+				+ "°, " + Math.round(this.currentPlayer.shotPower / this.maxPower * 100) + "%";
+		var p = this.input.activePointer.position;
+		this.shotInfoText.position = new Phaser.Point(p.x-100, p.y-50);
+	}
+
 	updateDebugText() {
 		var fps = Math.round(1000 / this.time.elapsedMS);
 		this.fpsText.text = 'FPS: ' + fps;
 
 		this.windText.text = 'Wind: ' + this.physics.arcade.gravity.x;
-		this.debugText.text = 'PLAYER DEBUG INFO:\n' + this.currentPlayer.toString();
+
+		this.debugText.text = 'Current State: ' + this.gamestate + '\n';
+		this.debugText.text += 'PLAYER DEBUG INFO:\n' + this.currentPlayer.toString();
 	}
 
 	shooting() {
@@ -291,6 +330,16 @@ export default class Stage extends Phaser.State {
 		this.bullet.rotation = this.bullet.body.angle;
 
 		this.sound.play('sound_shot');
+	}
+
+	bulletHitsCastle(bullet, player) {
+		var damage = 10; // TODO: dynamic damage values?
+
+		this.explode();
+		this.removeBullet();
+		player.takeDamage(damage); 
+
+		console.log(player.name + " was hit for " + damage + " damage!");
 	}
 
 	bulletVsLand() {
@@ -348,12 +397,15 @@ export default class Stage extends Phaser.State {
     	this.g.rotation = this.currentPlayer.shotAngle;
 	}
 
-	proceedToStateInSeconds(gamestate, seconds = DEFAULT_DELAY) {
-		this.gamestate = GAMESTATES.WAITING;
-		this.time.events.add(Phaser.Timer.SECOND * seconds, this.proceedToState, this, gamestate);
+	
+
+	proceedToState(nextState) {
+		this.gamestate = nextState;
 	}
 
-	proceedToState(gamestate) {
-		this.gamestate = gamestate;
+	proceedToStateInSeconds(nextState, seconds) {
+		console.log("proceeding to state " + nextState + " in " + seconds + " seconds.");
+		this.gamestate = GAMESTATES.WAITING;
+		this.time.events.add(Phaser.Timer.SECOND * seconds, this.proceedToState, this, nextState);
 	}
 }
