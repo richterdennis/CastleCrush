@@ -1,4 +1,5 @@
 import Player from '../Player.js'
+import Bar from '../Bar.js'
 
 const GAMESTATES = {
 	WAITING: 'waiting',
@@ -14,8 +15,8 @@ const GRAVITY = 500;
 const SHOT_CANCEL_DISTANCE = 200;
 const DEFAULT_DELAY = 1;
 
-const DEBUG = true;
-const DEBUGPHYSICS = false;
+const DEBUG = false;
+const DEBUGPHYSICS = true;
 
 export default class Stage extends Phaser.State {
 
@@ -139,11 +140,6 @@ export default class Stage extends Phaser.State {
 		this.arrow.angle = -90;
 		this.arrow.exists = false;
 
-		// ShotIndicator
-		this.g = this.add.graphics(100, 100);
-		this.g.lineStyle(5, 0xFFFFFF, 1);
-		this.g.lineTo(200, 0);
-
 		// Create the players and put them into position
 		this.players = [
 			new Player(
@@ -179,12 +175,22 @@ export default class Stage extends Phaser.State {
 		this.gLine.lineStyle(3, 0x0000ff, 1);
 
 		var font = {
-			font: "50px Roboto",
+			font: "50px Arial",
 			fill: "#FFFFFF" 
 		};
 
 		this.shotInfoText = this.add.text(-100, -100, '', font);
+		this.shotInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
 		this.gameInfoText = this.add.text(-100, -100, '', font);
+
+		this.healthBars = [	
+			new Bar(this.game, this.players[0].x-150, this.world.height-150, 300, 30),
+			new Bar(this.game, this.players[1].x-150, this.world.height-150, 300, 30)
+		];
+
+		this.healthBars.forEach((bar) => {
+			this.add.existing(bar);
+		});
 
 		this.sound.volume = 0.05;
 		this.sound.add('sound_shot');
@@ -201,16 +207,15 @@ export default class Stage extends Phaser.State {
 			this.game.debug.body(this.players[1]);
 			this.game.debug.body(this.bullet);
 		}
-
 		switch (this.gamestate) {
 			case GAMESTATES.WAITING:
 				break;
 
 			case GAMESTATES.INPUT:
+				this.indicateCurrentPlayer();
 				if (this.currentPlayer.isLocalPlayer)
 					this.playerInput();
 				else {} // Do Networkevent stuff
-				this.updateShotIndicator();
 				break;
 
 			case GAMESTATES.INFLIGHT:
@@ -303,6 +308,7 @@ export default class Stage extends Phaser.State {
 
 		this.debugText.text = 'Current State: ' + this.gamestate + '\n';
 		this.debugText.text += 'PLAYER DEBUG INFO:\n' + this.currentPlayer.toString();
+		this.debugText.text += 'Cursor: ' + this.input.activePointer.position;
 	}
 
 	shooting() {
@@ -334,10 +340,12 @@ export default class Stage extends Phaser.State {
 
 	bulletHitsCastle(bullet, player) {
 		var damage = 10; // TODO: dynamic damage values?
+		var pIndex = this.players.indexOf(player);
 
 		this.explode();
 		this.removeBullet();
-		player.takeDamage(damage); 
+		player.takeDamage(damage);
+		this.healthBars[pIndex].setValueTo(player.healthRatio());
 
 		console.log(player.name + " was hit for " + damage + " damage!");
 	}
@@ -352,6 +360,8 @@ export default class Stage extends Phaser.State {
 		} // unless it flies above the sky show arrow to indicate horizontal position
 		else if (this.bullet.y < -10) {
 			this.arrow.exists = true;
+			this.arrow.y = 20;
+			this.arrow.rotation = -Math.PI / 2;
 			this.arrow.x = this.bullet.x;
 		} // remove the indicator when the bullet reenters the screen
 		else if (this.arrow.exists) this.arrow.exists = false;
@@ -389,15 +399,7 @@ export default class Stage extends Phaser.State {
 		this.bullet.exists = false;
 		this.arrow.exists = false;
 		this.gamestate = GAMESTATES.CHECKSTATE;
-	}
-
-	updateShotIndicator() {
-		this.g.x = this.currentPlayer.turret.worldPosition.x;
-		this.g.y = this.currentPlayer.turret.worldPosition.y;
-    	this.g.rotation = this.currentPlayer.shotAngle;
-	}
-
-	
+	}	
 
 	proceedToState(nextState) {
 		this.gamestate = nextState;
@@ -407,5 +409,13 @@ export default class Stage extends Phaser.State {
 		console.log("proceeding to state " + nextState + " in " + seconds + " seconds.");
 		this.gamestate = GAMESTATES.WAITING;
 		this.time.events.add(Phaser.Timer.SECOND * seconds, this.proceedToState, this, nextState);
+	}
+
+	indicateCurrentPlayer() {
+		this.arrow.exists = true;
+		this.arrow.x = this.currentPlayer.x;
+		var sin = Math.sin(this.time.now/150)*20;
+		this.arrow.y = this.currentPlayer.y-this.currentPlayer.height + sin - 90;
+		this.arrow.rotation = Math.PI / 2;
 	}
 }
