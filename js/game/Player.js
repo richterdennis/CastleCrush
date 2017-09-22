@@ -5,12 +5,13 @@ export default class Player extends Phaser.Sprite {
 		this.castle.anchor.setTo(0.5, 1)
 
 		Phaser.Sprite.call(this, game, x, y);
-		this.resizeFrame(null, this.castle.width, this.castle.height);
+		this.resizeFrame(game, this.castle.width, this.castle.height);
 		this.width = this.castle.width;
 		this.height = this.castle.height;
 
 		this.name = name;
-		this.health = 15;
+		this.health = 30;
+		this.maxHealth = this.health;
 		this.shotAngle = -Math.PI / 2;
 		this.shotPower = 400;
 		this.leftSide = leftSide;
@@ -45,12 +46,16 @@ export default class Player extends Phaser.Sprite {
 	}
 
 	takeDamage(damage) {
-		this.health -= damage;
+		this.health = this.game.math.clamp(this.health - damage, 0, this.maxHealth);
 		return this.health;
 	}
 
 	isAlive() {
 		return this.health > 0;
+	}
+
+	healthRatio() {
+		return this.health / this.maxHealth;
 	}
 
 	toString() {
