@@ -16,7 +16,7 @@ const SHOT_CANCEL_DISTANCE = 200;
 const DEFAULT_DELAY = 1;
 
 const DEBUG = false;
-const DEBUGPHYSICS = true;
+const DEBUGPHYSICS = false;
 
 export default class Stage extends Phaser.State {
 
@@ -55,7 +55,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	init() {
-		this.gamestate = GAMESTATES.INPUT;
+		this.gamestate = GAMESTATES.WAITING;
 
 		this.background = null;
 		this.bullet = null;
@@ -65,8 +65,8 @@ export default class Stage extends Phaser.State {
 		this.blastRadius = 50;
 
 		// Player shooting Power and angle bounds
-		this.minPower = 200;
-		this.maxPower = 1000;
+		this.minPower = 300;
+		this.maxPower = 1200;
 		this.minAngle = -Math.PI;
 		this.maxAngle = 0;
 
@@ -175,17 +175,23 @@ export default class Stage extends Phaser.State {
 		this.gLine.lineStyle(3, 0x0000ff, 1);
 
 		var font = {
-			font: "50px Arial",
+			font: "50px Wendy One",
 			fill: "#FFFFFF" 
 		};
 
 		this.shotInfoText = this.add.text(-100, -100, '', font);
 		this.shotInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
-		this.gameInfoText = this.add.text(-100, -100, '', font);
+		this.gameInfoText = this.add.text(this.world.centerX, this.world.height - 150, 'Hallo Welt', font);
+		this.gameInfoText.setShadow(6, 6, 'rgba(0,0,0,0.8)', 4);
+		this.gameInfoText.anchor = new Phaser.Point(0.5, 1);
+		this.gameInfoText.fontSize = '84px';
+		this.windInfoText = this.add.text(this.world.centerX, this.world.height -50, '<>wind: x m/s', font);
+		this.windInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
+		this.windInfoText.anchor = new Phaser.Point(0.5, 1);
 
 		this.healthBars = [	
-			new Bar(this.game, this.players[0].x-150, this.world.height-150, 300, 30),
-			new Bar(this.game, this.players[1].x-150, this.world.height-150, 300, 30)
+			new Bar(this.game, this.players[0].x-150, this.world.height-100, 300, 20),
+			new Bar(this.game, this.players[1].x-150, this.world.height-100, 300, 20)
 		];
 
 		this.healthBars.forEach((bar) => {
@@ -195,6 +201,9 @@ export default class Stage extends Phaser.State {
 		this.sound.volume = 0.05;
 		this.sound.add('sound_shot');
 		this.sound.add('sound_explosion');
+
+		this.proceedToStateInSeconds(GAMESTATES.INPUT, 0, this.currentPlayer.name + " ist an der Reihe!");
+		this.updateWindInfoText();
 	}
 	
 	update() {
@@ -229,20 +238,20 @@ export default class Stage extends Phaser.State {
 				this.playerTurn = (this.playerTurn + 1) % this.players.length;
 				console.log('Next Player: ' + this.playerTurn);
 				this.currentPlayer = this.players[this.playerTurn];
-
-				//this.gamestate = GAMESTATES.INPUT;
-				this.proceedToStateInSeconds(GAMESTATES.INPUT, .5);
+				this.updateWindInfoText();
+				var text = this.currentPlayer.name + " ist an der Reihe!";
+				this.proceedToStateInSeconds(GAMESTATES.INPUT, .5, text);
 				break;
 
 			case GAMESTATES.CHECKSTATE:
 				if (this.players.every(p => p.isAlive()))
 					this.gamestate = GAMESTATES.BETWEENTURN;
-				else this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, .5);
+				else this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");
 				break;
 
 			case GAMESTATES.GAMEOVER:
 				console.log('Game Over');
-				this.state.start('Boot');
+				this.state.start('Boot'); // TODO Change to Game Over Screen Stage
 				break;
 		}
 	}
@@ -272,7 +281,7 @@ export default class Stage extends Phaser.State {
 			this.gLine.lineTo(this.pLine.end.x, this.pLine.end.y);
 
 			this.currentPlayer.shotAngle = this.math.clamp(this.pLine.angle, this.minAngle, this.maxAngle);
-			this.currentPlayer.shotPower = this.math.clamp(this.pLine.length, this.minPower, this.maxPower);
+			this.currentPlayer.shotPower = this.math.clamp(this.pLine.length*1.5, this.minPower, this.maxPower);
 
 			this.updateShotInfoDisplay();
 		}
@@ -280,13 +289,11 @@ export default class Stage extends Phaser.State {
 		{
 			this.gLine.clear();
 			console.log("Pointer just went up");
-			console.info(this.pLine.start, this.pLine.end, this.pLine.angle, this.pLine.length);
-			console.log(Math.abs(this.pLine.angle+this.math.HALF_PI));
 
 			if (this.validShot)
 			{
 				this.shooting();
-				this.gamestate = GAMESTATES.INFLIGHT;
+				this.proceedToStateInSeconds(GAMESTATES.INFLIGHT, 0.5, '');
 			}
 			this.shotInfoText.text = '';
 		}
@@ -405,10 +412,15 @@ export default class Stage extends Phaser.State {
 		this.gamestate = nextState;
 	}
 
-	proceedToStateInSeconds(nextState, seconds) {
+	proceedToStateInSeconds(nextState, seconds, infoText = null) {
 		console.log("proceeding to state " + nextState + " in " + seconds + " seconds.");
+		if (infoText !== null) this.gameInfoText.text = infoText;
+
 		this.gamestate = GAMESTATES.WAITING;
-		this.time.events.add(Phaser.Timer.SECOND * seconds, this.proceedToState, this, nextState);
+		if (seconds !== 0)
+			this.time.events.add(Phaser.Timer.SECOND * seconds, this.proceedToState, this, nextState);
+		else
+			this.proceedToState(nextState);
 	}
 
 	indicateCurrentPlayer() {
@@ -417,5 +429,19 @@ export default class Stage extends Phaser.State {
 		var sin = Math.sin(this.time.now/150)*20;
 		this.arrow.y = this.currentPlayer.y-this.currentPlayer.height + sin - 90;
 		this.arrow.rotation = Math.PI / 2;
+	}
+
+	updateWindInfoText() {
+		var wind = this.physics.arcade.gravity.x;
+		var noWind = wind === 0;
+		var text = '';
+
+		if (noWind) 
+			text = 'Kein Wind';
+		else {
+			text = wind > 0 ? 'Westwind: ' : 'Ostwind: ';
+			text += Number(Math.abs(wind) / 10).toFixed(1) + 'm/s';
+		}
+		this.windInfoText.text = text;
 	}
 }
