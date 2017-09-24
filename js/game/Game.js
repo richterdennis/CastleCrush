@@ -10,10 +10,10 @@ export default class Game extends Phaser.Game {
 			console.log(event);
 		});
 
-		this.preload();
+		this.startGame();
 	}
 
-	preload() {
+	startGame() {
 
 		// Add states
 		this.state.add('Boot', BootState, false);

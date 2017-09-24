@@ -9,7 +9,7 @@ export default class Boot extends Phaser.State {
 	}
 
 	create() {
-
+		// Show Phaser Logo while waiting for Players to load
 		console.log('Bootstate loaded');
 		const logo = this.add.sprite(
 			this.world.centerX,
