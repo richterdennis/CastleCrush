@@ -1,6 +1,7 @@
+import helper from '../helper'
 import { EVENTS } from '../EventManager';
-
 import View from './View'
+import WaitView from './WaitView';
 
 export default class RoomView extends View {
 	constructor() {
@@ -15,26 +16,26 @@ export default class RoomView extends View {
 		const joinUrl = location.href.split('#')[0] + '#/join/';
 
 		const players = [{
-			id: 1,
-			uuid: null,
+			position: 1,
+			id: null,
 			nickname: null,
 			ready: false,
 			joined: false
 		}, {
-			id: 2,
-			uuid: null,
+			position: 2,
+			id: null,
 			nickname: null,
 			ready: false,
 			joined: false
 		}];
 
 		players.forEach(player => {
-			const joinArea = this.find(`.join-area:nth-child(${player.id})`);
+			const joinArea = this.find(`.join-area:nth-child(${player.position})`);
 			const qrCodeHolder = joinArea.querySelector('.code-holder');
 			const clearCode = joinArea.querySelector('.clear-code');
 
-			new QRCode(qrCodeHolder, `${joinUrl}${roomId}-${player.id}`);
-			clearCode.value = `${roomId}-${player.id}`;
+			new QRCode(qrCodeHolder, `${joinUrl}${roomId}-${player.position}`);
+			clearCode.value = `${roomId}-${player.position}`;
 		});
 
 		CastleCrush.EventManager.addEventListener(EVENTS.JOIN_ROOM, (event) => {
@@ -43,14 +44,14 @@ export default class RoomView extends View {
 			const player = players[event.position-1];
 			if(player.joined) return;
 
-			player.uuid = event.sender;
+			player.id = event.playerId;
 			player.joined = true;
 
-			const joinArea = this.find(`.join-area:nth-child(${player.id})`);
+			const joinArea = this.find(`.join-area:nth-child(${player.position})`);
 			joinArea.classList.add('joined');
 
 			CastleCrush.EventManager.addEventListener(EVENTS.READY, (event) => {
-				if(player.uuid !== event.sender) return;
+				if(player.id !== event.playerId) return;
 
 				player.ready = true;
 				player.nickname = event.nickname;
@@ -71,26 +72,32 @@ export default class RoomView extends View {
 	}
 
 	joinLeft() {
+		const playerId = helper.uuid();
 		CastleCrush.EventManager.dispatch(EVENTS.JOIN_ROOM, {
 			roomid: CastleCrush.GameManager.roomid,
-			position: 1
+			position: 1,
+			playerId: playerId
 		});
 
-		this.showWaitView(1);
+		this.showWaitView(1, playerId);
 	}
 
 	joinRight() {
+		const playerId = helper.uuid();
 		CastleCrush.EventManager.dispatch(EVENTS.JOIN_ROOM, {
 			roomid: CastleCrush.GameManager.roomid,
-			position: 2
+			position: 2,
+			playerId: playerId
 		});
 
-		this.showWaitView(2);
+		this.showWaitView(2, playerId);
 	}
 
-	showWaitView(playerId) {
-		const joinArea = this.find(`.join-area:nth-child(${playerId})`);
+	showWaitView(position, playerId) {
+		const joinArea = this.find(`.join-area:nth-child(${position})`);
 		while(joinArea.firstChild) joinArea.firstChild.remove();
-		CastleCrush.ViewManager.wait.init(this).then(view => view.show(joinArea));
+		const waitView = new WaitView();
+		waitView.setPlayer(playerId);
+		waitView.init(this).then(view => view.show(joinArea));
 	}
 }
