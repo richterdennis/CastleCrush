@@ -1,3 +1,4 @@
+import { EVENTS } from '../../EventManager';
 import Player from '../Player.js'
 import Bar from '../Bar.js'
 
@@ -15,7 +16,7 @@ const GRAVITY = 500;
 const SHOT_CANCEL_DISTANCE = 200;
 const DEFAULT_DELAY = 1;
 
-const DEBUG = false;
+const DEBUG = true;
 const DEBUGPHYSICS = false;
 
 export default class Stage extends Phaser.State {
@@ -55,6 +56,22 @@ export default class Stage extends Phaser.State {
 	}
 
 	init() {
+
+		this.gameActionListener = CastleCrush.EventManager.addEventListener(
+			EVENTS.GAME_ACTION, (event) => {
+				console.log(event.type);
+				if (this.gamestate === GAMESTATES.INPUT 
+					&&	event.type === 'shot')
+				{
+					console.log('sollte schießen');
+
+					this.currentPlayer.shotAngle = event.angle;
+					this.currentPlayer.shotPower = event.power;
+					this.shooting();
+				}
+
+			});
+
 		this.gamestate = GAMESTATES.WAITING;
 
 		this.background = null;
@@ -222,9 +239,7 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.INPUT:
 				this.indicateCurrentPlayer();
-				if (this.currentPlayer.isLocalPlayer)
-					this.playerInput();
-				else {} // Do Networkevent stuff
+				this.playerInput();
 				break;
 
 			case GAMESTATES.INFLIGHT:
@@ -251,6 +266,10 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.GAMEOVER:
 				console.log('Game Over');
+				CastleCrush.EventManager.removeEventListener(
+					EVENTS.GAME_ACTION,
+					this.gameActionListener
+				);
 				this.state.start('Boot'); // TODO Change to Game Over Screen Stage
 				break;
 		}
@@ -292,8 +311,13 @@ export default class Stage extends Phaser.State {
 
 			if (this.validShot)
 			{
+				CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+					roomid: CastleCrush.GameManager.roomid,
+					type: 'shot',
+					angle: this.currentPlayer.shotAngle,
+					power: this.currentPlayer.shotPower
+				});
 				this.shooting();
-				this.proceedToStateInSeconds(GAMESTATES.INFLIGHT, 0.5, '');
 			}
 			this.shotInfoText.text = '';
 		}
@@ -343,6 +367,7 @@ export default class Stage extends Phaser.State {
 		this.bullet.rotation = this.bullet.body.angle;
 
 		this.sound.play('sound_shot');
+		this.proceedToStateInSeconds(GAMESTATES.INFLIGHT, 0, '');
 	}
 
 	bulletHitsCastle(bullet, player) {
