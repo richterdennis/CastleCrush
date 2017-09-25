@@ -18,11 +18,6 @@ export default class Boot extends Phaser.State {
 		);
 		logo.anchor.setTo(0.5, 0.5);
 
-		CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
-			roomid: CastleCrush.GameManager.roomid,
-			message: "hello"
-		});
-
 		this.state.start('Stage');
 	}
 }
