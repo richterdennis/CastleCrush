@@ -1,4 +1,4 @@
-export default class Player extends Phaser.Sprite {
+export default class PlayerSprite extends Phaser.Sprite {
 	constructor(game, name, x = 0, y = 0, key, leftSide = true, localPlayer = true) {
 		super(game);
 		this.castle = new Phaser.Sprite(game, 0, 0, key);
@@ -9,6 +9,7 @@ export default class Player extends Phaser.Sprite {
 		this.width = this.castle.width;
 		this.height = this.castle.height;
 
+		this.player = name;
 		this.name = name ? name.nickname : key;
 		this.health = 30;
 		this.maxHealth = this.health;
