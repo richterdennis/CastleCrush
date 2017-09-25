@@ -1,5 +1,5 @@
 import { EVENTS } from '../../EventManager';
-import Player from '../Player.js'
+import PlayerSprite from '../Player.js'
 import Bar from '../Bar.js'
 
 const GAMESTATES = {
@@ -56,18 +56,22 @@ export default class Stage extends Phaser.State {
 	}
 
 	init() {
-
+		this.eventsReceived = 0;
 		this.gameActionListener = CastleCrush.EventManager.addEventListener(
 			EVENTS.GAME_ACTION, (event) => {
-				console.log(event.type);
-				if (this.gamestate === GAMESTATES.INPUT 
-					&&	event.type === 'shot')
-				{
-					console.log('sollte schießen');
+				this.eventsReceived ++;
 
-					this.currentPlayer.shotAngle = event.angle;
-					this.currentPlayer.shotPower = event.power;
-					this.shooting();
+				console.log(event.action);
+				if (this.gamestate === GAMESTATES.INPUT) 
+				{
+					if (event.action === 'shot')
+					{
+						console.log('Netzwerkschuss:');
+	
+						this.currentPlayer.shotAngle = event.angle;
+						this.currentPlayer.shotPower = event.power;
+						this.shooting();
+					}
 				}
 
 			});
@@ -159,14 +163,14 @@ export default class Stage extends Phaser.State {
 
 		// Create the players and put them into position
 		this.players = [
-			new Player(
+			new PlayerSprite(
 				this.game,
 				this.options.players[0], 
 				this.distanceFromSide,
 				this.world.height - this.distanceFromBottom,
 				'castle_blue'
 			),
-			new Player(
+			new PlayerSprite(
 				this.game,
 				this.options.players[1],
 				this.world.width - this.distanceFromSide,
@@ -198,6 +202,7 @@ export default class Stage extends Phaser.State {
 
 		this.shotInfoText = this.add.text(-100, -100, '', font);
 		this.shotInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
+		this.shotInfoText.anchor = new Phaser.Point(1,1);
 		this.gameInfoText = this.add.text(this.world.centerX, this.world.height - 150, 'Hallo Welt', font);
 		this.gameInfoText.setShadow(6, 6, 'rgba(0,0,0,0.8)', 4);
 		this.gameInfoText.anchor = new Phaser.Point(0.5, 1);
@@ -249,7 +254,7 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.BETWEENTURN:
 				// recalculate wind check gameoverstate
-				this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+				this.physics.arcade.gravity.x = 0;//this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 				this.playerTurn = (this.playerTurn + 1) % this.players.length;
 				console.log('Next Player: ' + this.playerTurn);
 				this.currentPlayer = this.players[this.playerTurn];
@@ -283,7 +288,6 @@ export default class Stage extends Phaser.State {
 			// set pointer start to current pointer position
 			this.pLine.start = new Phaser.Point(pointer.x, pointer.y);
 			console.log("Pointer just went down");
-			
 		}
 		else if (pointer.isDown && this.lastState) // Pointer is down
 		{
@@ -309,11 +313,11 @@ export default class Stage extends Phaser.State {
 			this.gLine.clear();
 			console.log("Pointer just went up");
 
-			if (this.validShot)
+			if (this.validShot && CastleCrush.CONST.CLIENT.ID === this.currentPlayer.player.device)
 			{
 				CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
 					roomid: CastleCrush.GameManager.roomid,
-					type: 'shot',
+					action: 'shot',
 					angle: this.currentPlayer.shotAngle,
 					power: this.currentPlayer.shotPower
 				});
@@ -328,7 +332,7 @@ export default class Stage extends Phaser.State {
 		this.shotInfoText.text = Math.round(Math.abs(this.math.radToDeg(this.currentPlayer.shotAngle)))
 				+ "°, " + Math.round(this.currentPlayer.shotPower / this.maxPower * 100) + "%";
 		var p = this.input.activePointer.position;
-		this.shotInfoText.position = new Phaser.Point(p.x-100, p.y-50);
+		this.shotInfoText.position = new Phaser.Point(p.x-25, p.y);
 	}
 
 	updateDebugText() {
@@ -339,7 +343,9 @@ export default class Stage extends Phaser.State {
 
 		this.debugText.text = 'Current State: ' + this.gamestate + '\n';
 		this.debugText.text += 'PLAYER DEBUG INFO:\n' + this.currentPlayer.toString();
-		this.debugText.text += 'Cursor: ' + this.input.activePointer.position;
+		this.debugText.text += 'Cursor: ' + this.input.activePointer.position + '\n';
+		this.debugText.text += 'Cursor Time: ' + this.input.activePointer.previousTapTime + '\n';
+		this.debugText.text += 'Events R: ' + this.eventsReceived;
 	}
 
 	shooting() {
