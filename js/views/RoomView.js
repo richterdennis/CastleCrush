@@ -20,13 +20,15 @@ export default class RoomView extends View {
 			id: null,
 			nickname: null,
 			ready: false,
-			joined: false
+			joined: false,
+			device: null
 		}, {
 			position: 2,
 			id: null,
 			nickname: null,
 			ready: false,
-			joined: false
+			joined: false,
+			device: null
 		}];
 
 		players.forEach(player => {
@@ -46,6 +48,7 @@ export default class RoomView extends View {
 
 			player.id = event.playerId;
 			player.joined = true;
+			player.device = event.sender;
 
 			const joinArea = this.find(`.join-area:nth-child(${player.position})`);
 			joinArea.classList.add('joined');
@@ -64,7 +67,6 @@ export default class RoomView extends View {
 						player1: players[0],
 						player2: players[1],
 					});
-					CastleCrush.ViewManager.load('game');
 				}
 			});
 
