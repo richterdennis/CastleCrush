@@ -6,6 +6,10 @@ export default class Boot extends Phaser.State {
 
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		this.scale.aspectRatio = 16/9;
+
+		// TODO: figure out a way to set target FPS to 30
+		this.time.advancedTiming = true;
+		this.time.desiredFps = 30;
 	}
 
 	create() {
