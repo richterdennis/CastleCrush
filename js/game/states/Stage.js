@@ -225,7 +225,7 @@ export default class Stage extends Phaser.State {
 		this.gameInfoText.setShadow(6, 6, 'rgba(0,0,0,0.8)', 4);
 		this.gameInfoText.anchor = new Phaser.Point(0.5, 1);
 		this.gameInfoText.fontSize = '84px';
-		this.windInfoText = this.add.text(this.world.centerX, this.world.height -50, '<>wind: x m/s', font);
+		this.windInfoText = this.add.text(this.world.centerX, this.world.height -50, 'Kein Wind', font);
 		this.windInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
 		this.windInfoText.anchor = new Phaser.Point(0.5, 1);
 
@@ -242,7 +242,8 @@ export default class Stage extends Phaser.State {
 		this.sound.add('sound_shot');
 		this.sound.add('sound_explosion');
 
-		this.proceedToStateInSeconds(GAMESTATES.BETWEENTURN, 0);
+		this.proceedToStateInSeconds(GAMESTATES.CHECKSTATE, 0, 'Willkommen zu CastleCrush!');
+		this.time.events.add(Phaser.Timer.SECOND * 3, this.sendReady, this);
 	}
 	
 	update() {
@@ -472,10 +473,7 @@ export default class Stage extends Phaser.State {
 		this.gamestate = GAMESTATES.CHECKSTATE;
 
 		// Send ready event to sync up with other players
-		CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
-			roomid: CastleCrush.GameManager.roomid,
-			action: 'ready'
-		});
+		this.sendReady();
 	}	
 
 	proceedToState(nextState) {
@@ -513,6 +511,13 @@ export default class Stage extends Phaser.State {
 			text += Number(Math.abs(wind) / 10).toFixed(1) + 'm/s';
 		}
 		this.windInfoText.text = text;
+	}
+
+	sendReady() {
+		CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+			roomid: CastleCrush.GameManager.roomid,
+			action: 'ready'
+		});
 	}
 
 	myDevicesTurn() {
