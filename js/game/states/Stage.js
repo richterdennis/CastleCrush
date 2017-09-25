@@ -112,7 +112,7 @@ export default class Stage extends Phaser.State {
 		// set Arcade physics
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.physics.arcade.gravity.y = GRAVITY;
-		this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+		this.physics.arcade.gravity.x = 0; //this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 	}
 
 	create() {
@@ -281,6 +281,10 @@ export default class Stage extends Phaser.State {
 	}
 
 	playerInput() {
+		if (this.currentPlayer.player // TODO remove after debugging is finished
+				&& CastleCrush.CONST.CLIENT.ID !== this.currentPlayer.player.device)
+			return;
+
 		var pointer = this.input.activePointer;
 
 		if (pointer.isDown && !this.lastState) // Pointer went down
@@ -313,7 +317,7 @@ export default class Stage extends Phaser.State {
 			this.gLine.clear();
 			console.log("Pointer just went up");
 
-			if (this.validShot && CastleCrush.CONST.CLIENT.ID === this.currentPlayer.player.device)
+			if (this.validShot)
 			{
 				CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
 					roomid: CastleCrush.GameManager.roomid,

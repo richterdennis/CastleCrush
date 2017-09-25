@@ -1,5 +1,5 @@
 export default class PlayerSprite extends Phaser.Sprite {
-	constructor(game, name, x = 0, y = 0, key, leftSide = true, localPlayer = true) {
+	constructor(game, name, x = 0, y = 0, key, leftSide = true) {
 		super(game);
 		this.castle = new Phaser.Sprite(game, 0, 0, key);
 		this.castle.anchor.setTo(0.5, 1)
@@ -33,13 +33,6 @@ export default class PlayerSprite extends Phaser.Sprite {
 		this.anchor.setTo(0.5, 1);
 		if (!leftSide)
 			this.scale.x *= -1;
-
-		this.init();
-	}
-
-	init() {
-		console.log(this.name + " was created");
-		console.log(this.turret);
 	}
 
 	update() {
