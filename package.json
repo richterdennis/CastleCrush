@@ -7,12 +7,14 @@
     "start": "npm run dev",
     "dev": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\" \"npm run server\"",
     "server": "node index.js",
+
     "build": "npm run build:html & npm run build:css & npm run build:js & npm run build:public",
     "build:html": "pug index.pug -o dist & pug templates -o dist/templates",
     "build:css": "lessc less/style.less dist/css/style.css",
     "prebuild:js": "mkdirp dist/js",
     "build:js": "browserify js/main.js -o dist/js/main.js -t [ babelify --presets [ env ] --plugins [ syntax-async-functions transform-regenerator ] ]",
     "build:public": "ncp public dist/public",
+
     "watch": "concurrently -k \"npm run watch:html -s\" \"npm run watch:css -s\" \"npm run watch:js -s\" \"npm run watch:public -s\"",
     "watch:html": "nodemon -e pug --ignore dist/ -x npm run build:html",
     "watch:css": "nodemon -e less --ignore dist/ -x npm run build:css",

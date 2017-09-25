@@ -251,7 +251,7 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.GAMEOVER:
 				console.log('Game Over');
-				this.state.start('GameOver'); // TODO Change to Game Over Screen Stage
+				this.state.start('Boot'); // TODO Change to Game Over Screen Stage
 				break;
 		}
 	}

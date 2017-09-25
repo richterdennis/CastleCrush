@@ -1,7 +1,6 @@
 import { EVENTS } from '../EventManager';
 import BootState from './states/Boot'
 import StageState from './states/Stage'
-import GameOverState from './states/GameOver'
 
 export default class Game extends Phaser.Game {
 	constructor(parentElement) {
@@ -18,8 +17,7 @@ export default class Game extends Phaser.Game {
 
 		// Add states
 		this.state.add('Boot', BootState, false);
-		this.state.add('Stage', StageState, false);
-		this.state.add('GameOver', GameOverState, false)
+		this.state.add('Stage', StageState, false)
 
 		// Start boot state
 		this.state.start('Boot');
