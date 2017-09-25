@@ -11,12 +11,12 @@ const GAMESTATES = {
 	GAMEOVER: 'gameover'
 };
 
-const DIFFICULTY_WIND_MULTIPLIER = 50;
+const DIFFICULTY_WIND_MULTIPLIER = 75;
 const GRAVITY = 500;
 const SHOT_CANCEL_DISTANCE = 200;
 const DEFAULT_DELAY = 1;
 
-const DEBUG = true;
+const DEBUG = false;
 const DEBUGPHYSICS = false;
 
 export default class Stage extends Phaser.State {
@@ -71,7 +71,25 @@ export default class Stage extends Phaser.State {
 						this.currentPlayer.shotAngle = event.angle;
 						this.currentPlayer.shotPower = event.power;
 						this.shooting();
+
+						this.players.forEach((p) => { p.isReady = false; });
 					}
+				}
+				else if (event.action === 'ready') {
+					this.readyCount = 0;
+
+					this.players.forEach((p) => {
+						if (p.player.device === event.sender) 
+							p.isReady = true;
+						console.log(p.name, p.isReady);
+						if (p.isReady) 
+							this.readyCount++;
+					});
+					console.log('Players ready: ' + this.readyCount);
+				}
+				else if (event.action === 'wind') {
+					this.physics.arcade.gravity.x = event.power;
+					this.updateWindInfoText();
 				}
 
 			});
@@ -98,7 +116,7 @@ export default class Stage extends Phaser.State {
 		this.distanceFromSide = 300;
 		this.distanceFromBottom = 300;
 		this.players = []
-		this.playerTurn = 0;
+		this.playerTurn = 1;
 		this.currentPlayer;
 
 		this.manager = CastleCrush.GameManager;
@@ -224,8 +242,7 @@ export default class Stage extends Phaser.State {
 		this.sound.add('sound_shot');
 		this.sound.add('sound_explosion');
 
-		this.proceedToStateInSeconds(GAMESTATES.INPUT, 0, this.currentPlayer.name + " ist an der Reihe!");
-		this.updateWindInfoText();
+		this.proceedToStateInSeconds(GAMESTATES.BETWEENTURN, 0);
 	}
 	
 	update() {
@@ -254,10 +271,20 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.BETWEENTURN:
 				// recalculate wind check gameoverstate
-				this.physics.arcade.gravity.x = 0;//this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 				this.playerTurn = (this.playerTurn + 1) % this.players.length;
 				console.log('Next Player: ' + this.playerTurn);
 				this.currentPlayer = this.players[this.playerTurn];
+
+				if (this.myDevicesTurn())
+				{
+					var w = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+					this.physics.arcade.gravity.x = w;
+					CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+						roomid: CastleCrush.GameManager.roomid,
+						action: 'wind',
+						power: w
+					})
+				}
 				this.updateWindInfoText();
 				var text = this.currentPlayer.name + " ist an der Reihe!";
 				this.proceedToStateInSeconds(GAMESTATES.INPUT, .5, text);
@@ -265,7 +292,10 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.CHECKSTATE:
 				if (this.players.every(p => p.isAlive()))
-					this.gamestate = GAMESTATES.BETWEENTURN;
+				{
+					if (this.readyCount === 2)
+						this.gamestate = GAMESTATES.BETWEENTURN;
+				}
 				else this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");
 				break;
 
@@ -281,8 +311,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	playerInput() {
-		if (this.currentPlayer.player // TODO remove after debugging is finished
-				&& CastleCrush.CONST.CLIENT.ID !== this.currentPlayer.player.device)
+		if (this.myDevicesTurn())
 			return;
 
 		var pointer = this.input.activePointer;
@@ -441,6 +470,12 @@ export default class Stage extends Phaser.State {
 		this.bullet.exists = false;
 		this.arrow.exists = false;
 		this.gamestate = GAMESTATES.CHECKSTATE;
+
+		// Send ready event to sync up with other players
+		CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+			roomid: CastleCrush.GameManager.roomid,
+			action: 'ready'
+		});
 	}	
 
 	proceedToState(nextState) {
@@ -478,5 +513,10 @@ export default class Stage extends Phaser.State {
 			text += Number(Math.abs(wind) / 10).toFixed(1) + 'm/s';
 		}
 		this.windInfoText.text = text;
+	}
+
+	myDevicesTurn() {
+		return (this.currentPlayer.player // TODO remove after debugging is finished
+				&& CastleCrush.CONST.CLIENT.ID !== this.currentPlayer.player.device)
 	}
 }
