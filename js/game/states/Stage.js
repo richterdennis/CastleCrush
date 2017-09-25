@@ -312,7 +312,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	playerInput() {
-		if (this.myDevicesTurn())
+		if (!this.myDevicesTurn())
 			return;
 
 		var pointer = this.input.activePointer;
@@ -522,6 +522,6 @@ export default class Stage extends Phaser.State {
 
 	myDevicesTurn() {
 		return (this.currentPlayer.player // TODO remove after debugging is finished
-				&& CastleCrush.CONST.CLIENT.ID !== this.currentPlayer.player.device)
+				&& CastleCrush.CONST.CLIENT.ID === this.currentPlayer.player.device)
 	}
 }
