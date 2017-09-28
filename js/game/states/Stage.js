@@ -48,6 +48,7 @@ export default class Stage extends Phaser.State {
 		this.load.image('landscape', 'public/assets/landscape.png');
 		this.load.image('arrow', 'public/assets/tank_arrowFull.png');
 		this.load.image('wheel', 'public/assets/Rad.png');
+		this.load.image('playagain', 'public/assets/play.png');
 
 		this.load.audio('sound_shot', 'public/assets/shot.wav');
 		this.load.audio('sound_explosion', 'public/assets/explosion.wav');
@@ -246,12 +247,15 @@ export default class Stage extends Phaser.State {
 			case GAMESTATES.CHECKSTATE:
 				if (this.players.every(p => p.isAlive()))
 					this.gamestate = GAMESTATES.BETWEENTURN;
-				else this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");
+				else {
+					this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");}
 				break;
 
 			case GAMESTATES.GAMEOVER:
 				console.log('Game Over');
-				this.state.start('Boot'); // TODO Change to Game Over Screen Stage
+				if (this.players[0].isAlive()){this.state.states['GameOver'].winner = "Blau"; console.log('Blau');}
+				if (this.players[1].isAlive()){this.state.states['GameOver'].winner = "Rot"; console.log('Rot');}
+				this.state.start('GameOver', false);
 				break;
 		}
 	}
@@ -443,5 +447,5 @@ export default class Stage extends Phaser.State {
 			text += Number(Math.abs(wind) / 10).toFixed(1) + 'm/s';
 		}
 		this.windInfoText.text = text;
-	}
-}
+	}	
+}		
