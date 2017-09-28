@@ -14,11 +14,18 @@ html, body, #view {
 body {
   background: url(../public/assets/landscape.png);
   background-repeat: no-repeat;
-  background-size: cover;
-
+  background-size: 100vw 120vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  
+  @media (max-width: 1024px){
+	background-size: 100vw 130vh;
+  }
+  
+  @media (max-width: 325px){
+	background-size: 130vw 130vh;
+  }
 }
 
 .btn {
