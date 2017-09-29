@@ -7,13 +7,13 @@
   height: 100%;
   padding-top: 2%;
 
-  #logo {
-    height: 39vh;
-  }
-
   .btn {
     width: 20vw;
-    margin: 1vh;
+    margin: 2vh;
+  }
+
+  #logo {
+    height: 39vh;
   }
 
   #setting {
@@ -22,10 +22,24 @@
     width: 8vw;
     left: 70vw;
     bottom: 80vh;
-  } 
-  
+  }
+  // Tablet
+  @media (max-width: 1350px) {
+    padding-top: 5%;
+    #logo {
+      height: 45vh;
+    }
+    #setting {
+      left: 73vw;
+      width: 20vw;
+      bottom: 87vh;
+    }
+    .btn{
+      width: 30vw;
+    }
+  }
   // Querformat Smartphone
-  @media (max-width: 1024px) {
+  @media (max-width: 780px) {
 	padding-top: 5%;
 	#logo {
 		height: 45vh;
@@ -55,7 +69,7 @@
     #setting {
 		font-size: 1.5vh;
 		width: 32vw;
-		left: 65vw;
+		left: 62vw;
 		bottom: 90vh;
     }
   }
@@ -68,8 +82,8 @@
     }
 
     #setting {
-		width: 35vw;
-      left: 63vw;
+      width: 35vw;
+      left: 60vw;
       bottom: 90vh;
     }
   }
