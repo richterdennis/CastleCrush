@@ -1,4 +1,5 @@
-import Player from '../Player.js'
+import { EVENTS } from '../../EventManager';
+import PlayerSprite from '../Player.js'
 import Bar from '../Bar.js'
 
 const GAMESTATES = {
@@ -10,7 +11,7 @@ const GAMESTATES = {
 	GAMEOVER: 'gameover'
 };
 
-const DIFFICULTY_WIND_MULTIPLIER = 50;
+const DIFFICULTY_WIND_MULTIPLIER = 75;
 const GRAVITY = 500;
 const SHOT_CANCEL_DISTANCE = 200;
 const DEFAULT_DELAY = 1;
@@ -56,6 +57,44 @@ export default class Stage extends Phaser.State {
 	}
 
 	init() {
+		this.eventsReceived = 0;
+		this.gameActionListener = CastleCrush.EventManager.addEventListener(
+			EVENTS.GAME_ACTION, (event) => {
+				this.eventsReceived ++;
+
+				console.log(event.action);
+				if (this.gamestate === GAMESTATES.INPUT) 
+				{
+					if (event.action === 'shot')
+					{
+						console.log('Netzwerkschuss:');
+	
+						this.currentPlayer.shotAngle = event.angle;
+						this.currentPlayer.shotPower = event.power;
+						this.shooting();
+
+						this.players.forEach((p) => { p.isReady = false; });
+					}
+				}
+				else if (event.action === 'ready') {
+					this.readyCount = 0;
+
+					this.players.forEach((p) => {
+						if (p.player.device === event.sender) 
+							p.isReady = true;
+						console.log(p.name, p.isReady);
+						if (p.isReady) 
+							this.readyCount++;
+					});
+					console.log('Players ready: ' + this.readyCount);
+				}
+				else if (event.action === 'wind') {
+					this.physics.arcade.gravity.x = event.power;
+					this.updateWindInfoText();
+				}
+
+			});
+
 		this.gamestate = GAMESTATES.WAITING;
 
 		this.background = null;
@@ -78,7 +117,7 @@ export default class Stage extends Phaser.State {
 		this.distanceFromSide = 300;
 		this.distanceFromBottom = 300;
 		this.players = []
-		this.playerTurn = 0;
+		this.playerTurn = 1;
 		this.currentPlayer;
 
 		this.manager = CastleCrush.GameManager;
@@ -92,7 +131,7 @@ export default class Stage extends Phaser.State {
 		// set Arcade physics
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.physics.arcade.gravity.y = GRAVITY;
-		this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+		this.physics.arcade.gravity.x = 0; //this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 	}
 
 	create() {
@@ -143,14 +182,14 @@ export default class Stage extends Phaser.State {
 
 		// Create the players and put them into position
 		this.players = [
-			new Player(
+			new PlayerSprite(
 				this.game,
 				this.options.players[0], 
 				this.distanceFromSide,
 				this.world.height - this.distanceFromBottom,
 				'castle_blue'
 			),
-			new Player(
+			new PlayerSprite(
 				this.game,
 				this.options.players[1],
 				this.world.width - this.distanceFromSide,
@@ -182,11 +221,12 @@ export default class Stage extends Phaser.State {
 
 		this.shotInfoText = this.add.text(-100, -100, '', font);
 		this.shotInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
+		this.shotInfoText.anchor = new Phaser.Point(1,1);
 		this.gameInfoText = this.add.text(this.world.centerX, this.world.height - 150, 'Hallo Welt', font);
 		this.gameInfoText.setShadow(6, 6, 'rgba(0,0,0,0.8)', 4);
 		this.gameInfoText.anchor = new Phaser.Point(0.5, 1);
 		this.gameInfoText.fontSize = '84px';
-		this.windInfoText = this.add.text(this.world.centerX, this.world.height -50, '<>wind: x m/s', font);
+		this.windInfoText = this.add.text(this.world.centerX, this.world.height -50, 'Kein Wind', font);
 		this.windInfoText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
 		this.windInfoText.anchor = new Phaser.Point(0.5, 1);
 
@@ -203,8 +243,8 @@ export default class Stage extends Phaser.State {
 		this.sound.add('sound_shot');
 		this.sound.add('sound_explosion');
 
-		this.proceedToStateInSeconds(GAMESTATES.INPUT, 0, this.currentPlayer.name + " ist an der Reihe!");
-		this.updateWindInfoText();
+		this.proceedToStateInSeconds(GAMESTATES.CHECKSTATE, 0, 'Willkommen zu CastleCrush!');
+		this.time.events.add(Phaser.Timer.SECOND * 3, this.sendReady, this);
 	}
 	
 	update() {
@@ -223,9 +263,7 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.INPUT:
 				this.indicateCurrentPlayer();
-				if (this.currentPlayer.isLocalPlayer)
-					this.playerInput();
-				else {} // Do Networkevent stuff
+				this.playerInput();
 				break;
 
 			case GAMESTATES.INFLIGHT:
@@ -235,10 +273,20 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.BETWEENTURN:
 				// recalculate wind check gameoverstate
-				this.physics.arcade.gravity.x = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
 				this.playerTurn = (this.playerTurn + 1) % this.players.length;
 				console.log('Next Player: ' + this.playerTurn);
 				this.currentPlayer = this.players[this.playerTurn];
+
+				if (this.myDevicesTurn())
+				{
+					var w = this.rnd.integerInRange(-this.maxWindPower, this.maxWindPower);
+					this.physics.arcade.gravity.x = w;
+					CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+						roomid: CastleCrush.GameManager.roomid,
+						action: 'wind',
+						power: w
+					})
+				}
 				this.updateWindInfoText();
 				var text = this.currentPlayer.name + " ist an der Reihe!";
 				this.proceedToStateInSeconds(GAMESTATES.INPUT, .5, text);
@@ -246,21 +294,30 @@ export default class Stage extends Phaser.State {
 
 			case GAMESTATES.CHECKSTATE:
 				if (this.players.every(p => p.isAlive()))
-					this.gamestate = GAMESTATES.BETWEENTURN;
+				{
+					if (this.readyCount === 2)
+						this.gamestate = GAMESTATES.BETWEENTURN;
 				else {
 					this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");}
 				break;
 
 			case GAMESTATES.GAMEOVER:
 				console.log('Game Over');
+				CastleCrush.EventManager.removeEventListener(
+					EVENTS.GAME_ACTION,
+					this.gameActionListener
 				if (this.players[0].isAlive()){this.state.states['GameOver'].winner = "Blau"; console.log('Blau');}
 				if (this.players[1].isAlive()){this.state.states['GameOver'].winner = "Rot"; console.log('Rot');}
 				this.state.start('GameOver', false);
+				);
 				break;
 		}
 	}
 
 	playerInput() {
+		if (!this.myDevicesTurn())
+			return;
+
 		var pointer = this.input.activePointer;
 
 		if (pointer.isDown && !this.lastState) // Pointer went down
@@ -268,7 +325,6 @@ export default class Stage extends Phaser.State {
 			// set pointer start to current pointer position
 			this.pLine.start = new Phaser.Point(pointer.x, pointer.y);
 			console.log("Pointer just went down");
-			
 		}
 		else if (pointer.isDown && this.lastState) // Pointer is down
 		{
@@ -296,8 +352,13 @@ export default class Stage extends Phaser.State {
 
 			if (this.validShot)
 			{
+				CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+					roomid: CastleCrush.GameManager.roomid,
+					action: 'shot',
+					angle: this.currentPlayer.shotAngle,
+					power: this.currentPlayer.shotPower
+				});
 				this.shooting();
-				this.proceedToStateInSeconds(GAMESTATES.INFLIGHT, 0.5, '');
 			}
 			this.shotInfoText.text = '';
 		}
@@ -308,7 +369,7 @@ export default class Stage extends Phaser.State {
 		this.shotInfoText.text = Math.round(Math.abs(this.math.radToDeg(this.currentPlayer.shotAngle)))
 				+ "°, " + Math.round(this.currentPlayer.shotPower / this.maxPower * 100) + "%";
 		var p = this.input.activePointer.position;
-		this.shotInfoText.position = new Phaser.Point(p.x-100, p.y-50);
+		this.shotInfoText.position = new Phaser.Point(p.x-25, p.y);
 	}
 
 	updateDebugText() {
@@ -319,7 +380,9 @@ export default class Stage extends Phaser.State {
 
 		this.debugText.text = 'Current State: ' + this.gamestate + '\n';
 		this.debugText.text += 'PLAYER DEBUG INFO:\n' + this.currentPlayer.toString();
-		this.debugText.text += 'Cursor: ' + this.input.activePointer.position;
+		this.debugText.text += 'Cursor: ' + this.input.activePointer.position + '\n';
+		this.debugText.text += 'Cursor Time: ' + this.input.activePointer.previousTapTime + '\n';
+		this.debugText.text += 'Events R: ' + this.eventsReceived;
 	}
 
 	shooting() {
@@ -347,6 +410,7 @@ export default class Stage extends Phaser.State {
 		this.bullet.rotation = this.bullet.body.angle;
 
 		this.sound.play('sound_shot');
+		this.proceedToStateInSeconds(GAMESTATES.INFLIGHT, 0, '');
 	}
 
 	bulletHitsCastle(bullet, player) {
@@ -410,6 +474,9 @@ export default class Stage extends Phaser.State {
 		this.bullet.exists = false;
 		this.arrow.exists = false;
 		this.gamestate = GAMESTATES.CHECKSTATE;
+
+		// Send ready event to sync up with other players
+		this.sendReady();
 	}	
 
 	proceedToState(nextState) {
@@ -447,5 +514,17 @@ export default class Stage extends Phaser.State {
 			text += Number(Math.abs(wind) / 10).toFixed(1) + 'm/s';
 		}
 		this.windInfoText.text = text;
+	}
+
+	sendReady() {
+		CastleCrush.EventManager.dispatch(EVENTS.GAME_ACTION, {
+			roomid: CastleCrush.GameManager.roomid,
+			action: 'ready'
+		});
+	}
+
+	myDevicesTurn() {
+		return (this.currentPlayer.player // TODO remove after debugging is finished
+				&& CastleCrush.CONST.CLIENT.ID === this.currentPlayer.player.device)
 	}	
 }		

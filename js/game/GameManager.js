@@ -31,6 +31,8 @@ export default class GameManager {
 			this.player2 = event.player2;
 
 			this.state = 'ingame';
+
+			CastleCrush.ViewManager.load('game');
 		});
 	}
 }

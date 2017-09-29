@@ -27,6 +27,14 @@ export default class EventManager {
 			this.listener[eventType] = [];
 
 		this.listener[eventType].push(listener);
+		return listener;
+	}
+
+	removeEventListener(eventType, listener) {
+		if(!this.listener[eventType])
+			return;
+
+		this.listener[eventType].splice(this.listener[eventType].indexOf(listener), 1);
 	}
 
 	/**
