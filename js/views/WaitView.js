@@ -10,12 +10,6 @@ export default class WaitView extends View {
 		this.templateUrl = 'templates/wait';
 	}
 
-	afterInit() {
-		CastleCrush.EventManager.addEventListener(EVENTS.START_GAME, (event) => {
-			CastleCrush.ViewManager.load('game');
-		});
-	}
-
 	setPlayer(playerId) {
 		this.playerId = playerId;
 	}
