@@ -1,11 +1,14 @@
 #join
-	h1.hidden-xs CastleCrush beitreten
 
-	.join-area
-		.qr-code.form-control
-			.switch-camera S
-			video#scanner
+    #exit.btn(@click="schließen")
+    #zurueck.btn(@click="zurueck")
+    h1.hidden-xs CastleCrush beitreten
 
-		input.clear-code.form-control.input-lg(placeholder="oder Code eingeben")
+    .join-area
+        .qr-code.form-control
+            .switch-camera S
+            video#scanner
 
-		button.join.btn.btn-primary.btn-lg.btn-block(@click="join") beitreten
+        input.clear-code.form-control.input-lg(placeholder="oder Code eingeben")
+
+        button.join.btn.btn-primary.btn-lg.btn-block(@click="join") beitreten

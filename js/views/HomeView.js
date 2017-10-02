@@ -9,7 +9,7 @@ export default class HomeView extends View {
 	}
 
 	schließen() {
-		window.closed();
+		window.close();
 	}
 
 	join() {

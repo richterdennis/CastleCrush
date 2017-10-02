@@ -16,63 +16,99 @@
     height: 39vh;
   }
 
-  #setting {
+  #exit {
+    background: url(../public/assets/exit.png) no-repeat;
+    background-position: center;
+    height: 5vh;
+    width: 5vw;
     position: absolute;
-    font-size: 1.2vh;
-    width: 8vw;
-    left: 70vw;
-    bottom: 80vh;
+    left: 92.9vw;
+    bottom: 90vh;
   }
+
+  // FULLHD
+  @media (min-width: 1900px){
+    #logo {
+      height: 58vh;
+    }
+    .btn {
+      font-size: 20pt;
+      width: 32vw;
+      height: 8vh;
+      margin: 2vh;
+    }
+  }
+
   // Tablet
-  @media (max-width: 1350px) {
+  @media (max-width: 1366px) {
     padding-top: 5%;
     #logo {
-      height: 45vh;
+      height: 50vh;
     }
-    #setting {
-      left: 73vw;
-      width: 20vw;
+    #exit {
+      height: 5vh;
+      width: 10vw;
+      left: 85.6vw;
       bottom: 87vh;
     }
     .btn{
       width: 30vw;
     }
   }
-  // Querformat Smartphone
+
+  //iPad
   @media (max-width: 780px) {
-	padding-top: 5%;
-	#logo {
-		height: 45vh;
-	}
-    #setting {
-		font-size: 2.2vh;
-		width: 22vw;
-		left: 75vw;
-		bottom: 87vh;
+    padding-top: 20%;
+    #logo {
+      height: 45vh;
     }
-	.btn{
-		width: 30vw;
-	}
+    #exit {
+      height: 6vh;
+      width: 10vw;
+      left: 85vw;
+      bottom: 87vh;
+    }
+    .btn{
+      width: 30vw;
+    }
   }
+
+  // Querformat Smartphone
+  @media (max-width: 750px) {
+    padding-top:5%;
+    #logo {
+      height: 45vh;
+    }
+    #exit {
+      height: 7vh;
+      width: 10vw;
+      left: 86vw;
+      bottom: 88vh;
+    }
+    .btn{
+      width: 30vw;
+    }
+  }
+
   // Smartphonesicht
   @media (max-width: 450px) {
     padding-top: 25%;
 
-	#logo {
-		height: 35vh;
-	}
-	
+    #logo {
+      height: 35vh;
+    }
+
     .btn {
       width: 43vw;
     }
 
-    #setting {
-		font-size: 1.5vh;
-		width: 32vw;
-		left: 62vw;
-		bottom: 90vh;
+    #exit {
+      height: 4vh;
+      left: 80vw;
+      bottom: 90vh;
     }
   }
+
   // Smartphonesicht noch kleiner
   @media (max-width: 325px) {
     margin-top: 5vh;
@@ -81,10 +117,8 @@
       width: 48vw;
     }
 
-    #setting {
-      width: 35vw;
-      left: 60vw;
-      bottom: 90vh;
+    #exit{
+      left: 80vw;
     }
   }
 

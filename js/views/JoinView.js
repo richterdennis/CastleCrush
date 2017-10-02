@@ -85,4 +85,13 @@ export default class JoinView extends View {
 			position: position
 		});
 	}
+
+	schließen() {
+		window.close();
+	}
+
+	zurueck() {
+		CastleCrush.ViewManager.load('home');
+	}
+
 }

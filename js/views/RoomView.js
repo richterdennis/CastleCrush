@@ -93,4 +93,12 @@ export default class RoomView extends View {
 		while(joinArea.firstChild) joinArea.firstChild.remove();
 		CastleCrush.ViewManager.wait.init(this).then(view => view.show(joinArea));
 	}
+
+	schließen() {
+		window.close();
+	}
+
+	zurueck() {
+		CastleCrush.ViewManager.load('start');
+	}
 }
