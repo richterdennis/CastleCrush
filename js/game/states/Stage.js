@@ -297,8 +297,10 @@ export default class Stage extends Phaser.State {
 				{
 					if (this.readyCount === 2)
 						this.gamestate = GAMESTATES.BETWEENTURN;
+				}
 				else {
-					this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");}
+					this.proceedToStateInSeconds(GAMESTATES.GAMEOVER, 3, "GAME OVER!");
+				}
 				break;
 
 			case GAMESTATES.GAMEOVER:
@@ -306,10 +308,10 @@ export default class Stage extends Phaser.State {
 				CastleCrush.EventManager.removeEventListener(
 					EVENTS.GAME_ACTION,
 					this.gameActionListener
+				);
 				if (this.players[0].isAlive()){this.state.states['GameOver'].winner = "Blau"; console.log('Blau');}
 				if (this.players[1].isAlive()){this.state.states['GameOver'].winner = "Rot"; console.log('Rot');}
 				this.state.start('GameOver', false);
-				);
 				break;
 		}
 	}
