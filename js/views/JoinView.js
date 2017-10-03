@@ -1,5 +1,5 @@
+import helper from '../helper'
 import { EVENTS } from '../EventManager';
-
 import View from './View'
 
 export default class JoinView extends View {
@@ -80,9 +80,14 @@ export default class JoinView extends View {
 
 	joinGame(code) {
 		const [roomid, position] = code.split('-');
+		const playerId = helper.uuid();
+
+		CastleCrush.ViewManager.wait.setPlayer(playerId);
+
 		CastleCrush.EventManager.dispatch(EVENTS.JOIN_ROOM, {
 			roomid: roomid.toUpperCase(),
-			position: position
+			position: position,
+			playerId: playerId
 		});
 	}
 
