@@ -6,7 +6,7 @@
 	margin: 0 auto;
 	max-width: 800px;
 	text-align: center;
-	
+
 	#exit {
 		background: url(../public/assets/exit.png) no-repeat;
 		background-position: center;
@@ -42,23 +42,23 @@
 
 	// FULLHD
 	@media (min-width: 1900px) {
-
 		* {
 			font-size: 20pt;
 		}
-
 		h1 {
 			font-size: 60pt;
 		}
 	}
 
 	// zwischen iPad < X
-	@media (min-width: 1024px){
+	@media (min-width: 1000px){
 		padding-top: 10%;
-	}
-
-	// Tablet
-	@media (max-width: 1366px) {
+		* {
+			font-size: 20pt;
+		}
+		h1 {
+			font-size: 60pt;
+		}
 		#exit {
 			height: 5vh;
 			width: 10vw;
@@ -74,6 +74,12 @@
 	//iPad
 	@media (max-width: 780px) {
 		padding-top: 15%;
+		* {
+			font-size: 20pt;
+		}
+		h1 {
+			font-size: 40pt;
+		}
 		#exit {
 			height: 6vh;
 			width: 10vw;
@@ -90,6 +96,12 @@
 	// Querformat Smartphone 750px
 	@media (max-width: 750px) {
 		padding-top: 5%;
+		* {
+			font-size: 15pt;
+		}
+		h1 {
+			font-size: 25pt;
+		}
 		#exit {
 			height: 6.5vh;
 			width: 10vw;
@@ -103,9 +115,16 @@
 			bottom: 89vh;
 		}
 	}
+
 	// Querformat Smartphone 580px
 	@media (max-width: 580px) {
 		padding-top: 5%;
+		* {
+			font-size: 10pt;
+		}
+		h1 {
+			font-size: 20pt;
+		}
 		#exit {
 			height: 7vh;
 			width: 10vw;
@@ -118,9 +137,16 @@
 			bottom: 92vh;
 		}
 	}
+
 	// Smartphonesicht
 	@media (max-width: 450px) {
-		padding-top: 100px;
+		padding-top: 50px;
+		* {
+			font-size: 18pt;
+		}
+		h1 {
+			font-size: 30pt;
+		}
 		#exit {
 			height: 4vh;
 			left: 83.5vw;
@@ -131,6 +157,16 @@
 			height: 5vh;
 			right: 83.5vw;
 			bottom: 91vh;
+		}
+	}
+
+	// kleines Smartphone (iphone 5) breite < 350px
+	@media (max-width: 350px) {
+		* {
+			font-size: 10pt;
+		}
+		h1 {
+			font-size: 30pt;
 		}
 	}
 }
