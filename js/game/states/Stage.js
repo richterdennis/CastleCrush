@@ -57,7 +57,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	init() {
-		// this.scale.setUserScale(0.5, 0.5);
+		this.scale.forceOrientation(true, false);
 		this.eventsReceived = 0;
 		this.gameActionListener = CastleCrush.EventManager.addEventListener(
 			EVENTS.GAME_ACTION, (event) => {
@@ -95,6 +95,7 @@ export default class Stage extends Phaser.State {
 				}
 
 			});
+		this.input.onTap.add(this.goFull, this);
 
 		this.gamestate = GAMESTATES.WAITING;
 
@@ -538,4 +539,15 @@ export default class Stage extends Phaser.State {
 		return (this.currentPlayer.player // TODO remove after debugging is finished
 				&& CastleCrush.CONST.CLIENT.ID === this.currentPlayer.player.device)
 	}	
+
+	goFull(pointer, double) {
+		console.log("Go Fullscreen detected", pointer, double);
+
+		if (!double) return;
+		if (this.scale.isFullScreen) 
+			this.scale.stopFullScreen();
+		else 
+			this.scale.startFullScreen(false);
+
+	}
 }		

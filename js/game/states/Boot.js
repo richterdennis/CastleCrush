@@ -3,6 +3,8 @@ export default class Boot extends Phaser.State {
 		this.load.image('logo', 'public/assets/phaser.png');
 
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		this.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+		// this.scale.forceOrientation(true, false);
 		this.scale.aspectRatio = 16/9;
 	}
 
