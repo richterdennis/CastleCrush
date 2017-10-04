@@ -57,6 +57,7 @@ export default class Stage extends Phaser.State {
 	}
 
 	init() {
+		// this.scale.setUserScale(0.5, 0.5);
 		this.eventsReceived = 0;
 		this.gameActionListener = CastleCrush.EventManager.addEventListener(
 			EVENTS.GAME_ACTION, (event) => {
