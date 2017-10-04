@@ -53,4 +53,11 @@ export default class View {
 	}
 
 	afterInit() {}
+
+	back(){
+		return () => {
+			console.log("geschaft");
+		};
+	}
+
 }

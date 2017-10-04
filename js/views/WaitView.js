@@ -23,4 +23,10 @@ export default class WaitView extends View {
 		});
 		this.find('#wait').classList.add('ready');
 	}
+	
+	back(){
+		return () => {
+			CastleCrush.ViewManager.load('home');
+		}
+	}
 }

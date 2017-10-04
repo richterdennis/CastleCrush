@@ -34,6 +34,12 @@ export default class ViewManager {
 		window.addEventListener('popstate', event => {
 		  this.load(location.hash.substr(2).split('/')[0], true);
 		});
+
+		document.getElementById("close").addEventListener("click", (event) => {
+			window.close();
+		});
+
+		this.backbutton = document.getElementById("back");
 	}
 
 	load(viewName = '', nohistory = false) {
@@ -56,6 +62,12 @@ export default class ViewManager {
 
 			// Set the page title
 			document.title = title;
+			document.body.classList.value = view.title;
+
+			// Add eventlistener for backbutton
+			const backFunction = view.back();
+			this.backbutton.style.display = !backFunction ? "none" : "block";
+			this.backbutton.onclick = backFunction;
 
 			// Remove the old view
 			while(this.viewWrapper.firstChild) {
