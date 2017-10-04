@@ -7,13 +7,33 @@
   height: 100%;
   padding-top: 2%;
 
+  #logo {
+    background: url("../public/assets/LogoInGame.png") no-repeat center;
+    background-size: contain;
+    height: 50vh;
+    width: 100vw;
+  }
+
   .btn {
-    width: 20vw;
-    margin: 2vh;
+    width: 25vw;
+    margin: auto;
+    margin-bottom: 3vh;
+    font-size: 20pt;
+  }
+
+  .buttonWrapper {
+    margin-top: 5px;
+    padding-top: 5vh;
+    background: url("../public/assets/LogoInGame2.png") no-repeat;
+    height: 50vh;
+    width: 100%;
+    background-position: center top;
+    background-size: 55vw;
   }
 
   #logo {
-    height: 39vh;
+    height: 50vh;
+    max-width: 90vw;
   }
 
   #exit {
@@ -26,25 +46,10 @@
     bottom: 90vh;
   }
 
-  // FULLHD
-  @media (min-width: 1900px){
-    #logo {
-      height: 58vh;
-    }
-    .btn {
-      font-size: 20pt;
-      width: 30vw;
-      height: 6vh;
-      margin: 2vh;
-    }
-  }
-
   // Tablet
   @media (max-width: 1366px) {
     padding-top: 5%;
-    #logo {
-      height: 50vh;
-    }
+
     #exit {
       height: 5vh;
       width: 10vw;
@@ -59,9 +64,7 @@
   //iPad
   @media (max-width: 780px) {
     padding-top: 20%;
-    #logo {
-      height: 45vh;
-    }
+
     #exit {
       height: 6vh;
       width: 10vw;
@@ -76,9 +79,6 @@
   // Querformat Smartphone
   @media (max-width: 750px) {
     padding-top:5%;
-    #logo {
-      height: 45vh;
-    }
     #exit {
       height: 7vh;
       width: 10vw;
@@ -93,11 +93,6 @@
   // Smartphonesicht
   @media (max-width: 450px) {
     padding-top: 25%;
-
-    #logo {
-      height: 35vh;
-    }
-
     .btn {
       width: 43vw;
     }
