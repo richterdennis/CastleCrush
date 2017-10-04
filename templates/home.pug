@@ -1,8 +1,9 @@
 #home
-	h1 CastleCrush
 
-	button.btn.btn-primary.btn-lg(@click="join") beitreten
+    #exit.btn(@click="schließen")
 
-	.divider
+    div#logo
 
-	button.btn.btn-primary.btn-lg(@click="start") starten
+    .buttonWrapper
+        button.btn.btn-primary.btn-lg.btn-block(@click="join") Spiel beitreten
+        button.btn.btn-primary.btn-lg.btn-block(@click="start") Spiel erstellen

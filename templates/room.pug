@@ -1,16 +1,19 @@
 #room
-	h1 Warte auf Spieler!
 
-	.join-area-wrapper
+    #exit.btn(@click="schließen")
+    #zurueck.btn(@click="zurueck")
+    h1.hidden-xs Warte auf Spieler!
 
-		.join-area
-			.qr-code.form-control
-				.code-holder
-			input.clear-code.form-control.input-lg(readonly)
-			button.join.btn.btn-primary.btn-lg.btn-block(@click="joinLeft") Hier spielen
+    .join-area-wrapper
 
-		.join-area
-			.qr-code.form-control
-				.code-holder
-			input.clear-code.form-control.input-lg(readonly)
-			button.join.btn.btn-primary.btn-lg.btn-block(@click="joinRight") Hier spielen
+        .join-area
+            .qr-code.form-control
+                .code-holder
+            input.clear-code.form-control.input-lg(readonly)
+            button.join.btn.btn-primary.btn-lg.btn-block(@click="joinLeft") Hier spielen
+
+        .join-area
+            .qr-code.form-control
+                .code-holder
+            input.clear-code.form-control.input-lg(readonly)
+            button.join.btn.btn-primary.btn-lg.btn-block(@click="joinRight") Hier spielen

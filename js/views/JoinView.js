@@ -90,4 +90,13 @@ export default class JoinView extends View {
 			playerId: playerId
 		});
 	}
+
+	schließen() {
+		window.close();
+	}
+
+	zurueck() {
+		CastleCrush.ViewManager.load('home');
+	}
+
 }

@@ -12,26 +12,50 @@ html, body, #view {
 }
 
 body {
-  background: url(../public/assets/phaser.png);
-
+  background: url(../public/assets/landscape.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: Wendy One;
+
+  h1{
+    color:white;
+    text-shadow: 1px  1px 2px black,
+      1px -1px 2px black,
+      -1px  1px 2px black,
+      -1px -1px 2px black;
+  }
+  
+  @media (max-width: 1024px){
+	background-size: 100vw 120vh;
+  }
+  
+  @media (max-width: 325px){
+	background-size: 130vw 120vh;
+  }
 }
+
+.btn {
+  background-image: url("../public/assets/holz.jpg");
+  border-radius: 0px;
+}
+
 
 #view {
   display: flex;
   flex-direction: column;
 
   padding: 30px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0);
 
-  @media (min-width: 1024px) {
-    width: 1024px;
+  @media (max-width: 450px) {
     max-height: 768px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    padding: 40px;
+    background-image: url(../public/assets/mobileLandscape.png);
+    background-size: cover;
   }
+
 }
 
 #errorview {

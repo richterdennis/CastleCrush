@@ -3,9 +3,29 @@
 
 	display: flex;
 	flex-direction: column;
+	margin: 0 auto;
+	max-width: 800px;
+	text-align: center;
+	
+	#exit {
+		background: url(../public/assets/exit.png) no-repeat;
+		background-position: center;
+		height: 5vh;
+		width: 5vw;
+		position: absolute;
+		left: 94vw;
+		bottom: 92vh;
+	}
 
-	.settings {
-		margin: 5vh 0;
+	#zurueck {
+		background: url(../public/assets/Pfeil_links.png) no-repeat;
+		background-position: center;
+		background-size: 90% 100%;
+		height: 5vh;
+		width: 5vw;
+		position: absolute;
+		right: 93vw;
+		bottom: 92vh;
 	}
 
 	.btn-wrapper {
@@ -17,6 +37,100 @@
 
 		.btn {
 			width: 200px;
+		}
+	}
+
+	// FULLHD
+	@media (min-width: 1900px) {
+
+		* {
+			font-size: 20pt;
+		}
+
+		h1 {
+			font-size: 60pt;
+		}
+	}
+
+	// zwischen iPad < X
+	@media (min-width: 1024px){
+		padding-top: 10%;
+	}
+
+	// Tablet
+	@media (max-width: 1366px) {
+		#exit {
+			height: 5vh;
+			width: 10vw;
+			left: 86.5vw;
+			bottom: 89vh;
+		}
+		#zurueck {
+			right: 89vw;
+			bottom: 88.3vh;
+		}
+	}
+
+	//iPad
+	@media (max-width: 780px) {
+		padding-top: 15%;
+		#exit {
+			height: 6vh;
+			width: 10vw;
+			left: 87.6vw;
+			bottom: 89vh;
+		}
+		#zurueck {
+			width: 10vw;
+			right: 85vw;
+			bottom: 89vh;
+		}
+	}
+
+	// Querformat Smartphone 750px
+	@media (max-width: 750px) {
+		padding-top: 5%;
+		#exit {
+			height: 6.5vh;
+			width: 10vw;
+			left: 86vw;
+			bottom: 89vh;
+		}
+		#zurueck {
+			width: 6vw;
+			height: 5.5vh;
+			right: 87vw;
+			bottom: 89vh;
+		}
+	}
+	// Querformat Smartphone 580px
+	@media (max-width: 580px) {
+		padding-top: 5%;
+		#exit {
+			height: 7vh;
+			width: 10vw;
+			left: 86vw;
+			bottom: 92.6vh;
+		}
+		#zurueck {
+			width: 6.8vw;
+			right: 87vw;
+			bottom: 92vh;
+		}
+	}
+	// Smartphonesicht
+	@media (max-width: 450px) {
+		padding-top: 100px;
+		#exit {
+			height: 4vh;
+			left: 83.5vw;
+			bottom: 92vh;
+		}
+		#zurueck {
+			width: 10vw;
+			height: 5vh;
+			right: 83.5vw;
+			bottom: 91vh;
 		}
 	}
 }
