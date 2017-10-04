@@ -91,12 +91,10 @@ export default class JoinView extends View {
 		});
 	}
 
-	schließen() {
-		window.close();
-	}
-
-	zurueck() {
-		CastleCrush.ViewManager.load('home');
+	back(){
+		return () => {
+			CastleCrush.ViewManager.load('home');
+		}
 	}
 
 }

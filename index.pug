@@ -5,12 +5,17 @@ html(lang="de")
 		meta(charset="utf-8")
 		meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no")
 		meta(name="mobile-web-app-capable" content="yes")
+		meta(name="apple-mobile-web-app-capable" content="yes")
+		meta(name="apple-mobile-web-app-status-bar-style" content="black")
 		link(href="https://fonts.googleapis.com/css?family=Wendy+One" rel="stylesheet")
 		link(rel="stylesheet" href="css/style.css")
 
 	body
 		aside#errorview
 		main#view
+
+		button#back.btn
+		button#close.btn
 
 		script(src='public/phaser.min.js')
 		script(src='public/qrcode.min.js')

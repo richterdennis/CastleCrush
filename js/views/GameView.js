@@ -12,4 +12,9 @@ export default class GameView extends View {
 	afterInit() {
 		new Game(this.find('#game'));
 	}
+
+	back(){
+		return null;
+	}
+	
 }

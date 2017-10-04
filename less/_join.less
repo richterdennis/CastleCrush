@@ -4,27 +4,6 @@
 	display: flex;
 	flex-direction: column;
 
-	#exit {
-		background: url(../public/assets/exit.png) no-repeat;
-		background-position: center;
-		height: 5vh;
-		width: 5vw;
-		position: absolute;
-		left: 94vw;
-		bottom: 92vh;
-	}
-
-	#zurueck {
-		background: url(../public/assets/Pfeil_links.png) no-repeat;
-		background-position: center;
-		background-size: 90% 100%;
-		height: 5vh;
-		width: 5vw;
-		position: absolute;
-		right: 93vw;
-		bottom: 92vh;
-	}
-
 	h1 {
 		margin-bottom: 20px;
 		text-align: center;
@@ -123,80 +102,25 @@
 		.join-area{
 			width: 30%;
 		}
-		#exit {
-			width: 10vw;
-			left: 86.5vw;
-			bottom: 89vh;
-		}
-		#zurueck {
-			right: 89vw;
-			bottom: 88.3vh;
-		}
 	}
 
 	//iPad
 	@media (max-width: 780px) {
 		padding-top: 5%;
-		#exit {
-			height: 6vh;
-			width: 10vw;
-			left: 87.6vw;
-			bottom: 89vh;
-		}
-		#zurueck {
-			width: 10vw;
-			right: 85vw;
-			bottom: 89vh;
-		}
 	}
 
-	// Querformat Smartphone 750px breite
+	// Querformat Smartphone
 	@media (max-width: 750px) {
 		.join-area{
 			width: 32%;
 		}
-		#exit {
-			height: 6.5vh;
-			width: 10vw;
-			left: 86vw;
-			bottom: 91.6vh;
-		}
-		#zurueck {
-			width: 6.2vw;
-			right: 87vw;
-			bottom: 91.1vh;
-		}
 	}
 
-	// Querformat Smartphone 580px breite
-	@media (max-width: 580px) {
-		#exit {
-			height: 7vh;
-			width: 10vw;
-			left: 86vw;
-			bottom: 89.6vh;
-		}
-		#zurueck {
-			width: 6.8vw;
-			right: 87vw;
-			bottom: 89.1vh;
-		}
-	}
 	// Smartphonesicht
 	@media (max-width: 450px) {
 		padding-top: 100px;
 		.join-area{
 			width: 70%;
-		}
-		#exit {
-			height: 4vh;
-			left: 83.5vw;
-			bottom: 92vh;
-		}
-		#zurueck {
-			width: 10vw;
-			right: 83.5vw;
-			bottom: 91vh;
 		}
 	}
 }

@@ -24,11 +24,9 @@ export default class StartView extends View {
 		CastleCrush.ViewManager.load('room');
 	}
 
-	schließen() {
-		window.close();
-	}
-
-	zurueck() {
-		CastleCrush.ViewManager.load('home');
+	back(){
+		return () => {
+			CastleCrush.ViewManager.load('home');
+		}
 	}
 }

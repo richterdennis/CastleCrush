@@ -8,15 +8,15 @@ export default class HomeView extends View {
 		this.templateUrl = 'templates/home';
 	}
 
-	schließen() {
-		window.close();
-	}
-
 	join() {
 		CastleCrush.ViewManager.load('join');
 	}
 
 	start() {
 		CastleCrush.ViewManager.load('start');
+	}
+
+	back(){
+		return null;
 	}
 }
