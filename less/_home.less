@@ -46,75 +46,102 @@
     bottom: 90vh;
   }
 
-  // Tablet
-  @media (max-width: 1366px) {
-    padding-top: 5%;
+  // FULLHD
+  @media (min-width: 1800px) {
+    .buttonWrapper {
+      position: relative;
+      width: 100%;
+      background-size: 53vw;
+    }
+  }
 
-    #exit {
-      height: 5vh;
-      width: 10vw;
-      left: 85.6vw;
-      bottom: 87vh;
+  // Laptop
+  @media (max-width: 1400px) {
+    padding-top: 5%;
+    .buttonWrapper {
+      position: relative;
+      width: 100%;
+      background-size: 40vw;
     }
     .btn{
-      width: 30vw;
+      width: 15vw;
+      font-size: 10pt;
+    }
+  }
+
+  // Tablet
+  @media (max-width: 1024px) {
+    padding-top: 5%;
+    .buttonWrapper {
+      position: relative;
+      width: 100%;
+      background-size: 65vw;
+    }
+    .btn{
+      width: 35vw;
+      font-size: 20pt;
     }
   }
 
   //iPad
   @media (max-width: 780px) {
     padding-top: 20%;
-
-    #exit {
-      height: 6vh;
-      width: 10vw;
-      left: 85vw;
-      bottom: 87vh;
-    }
     .btn{
-      width: 30vw;
+      width: 40vw;
+      font-size: 20pt;
+    }
+    .buttonWrapper {
+      position: relative;
+      top: -70px;
+      width: 100%;
+      background-size: 90vw;
     }
   }
 
   // Querformat Smartphone
   @media (max-width: 750px) {
-    padding-top:5%;
-    #exit {
-      height: 7vh;
-      width: 10vw;
-      left: 86vw;
-      bottom: 88vh;
-    }
-    .btn{
+    padding-top: 20vh;
+    .btn {
+      padding-top: 2vh;
+      font-size: 10pt;
       width: 30vw;
+      height: 10vh;
+    }
+    .buttonWrapper {
+      position: relative;
+      top: 3px;
+      width: 100%;
+      background-size: 58vw;
     }
   }
 
   // Smartphonesicht
   @media (max-width: 450px) {
-    padding-top: 25%;
+    padding-top: 20%;
     .btn {
-      width: 43vw;
+      font-size: 10pt;
+      width: 45vw;
+      height: 7vh;
     }
-
-    #exit {
-      height: 4vh;
-      left: 80vw;
-      bottom: 90vh;
+    .buttonWrapper {
+      position: relative;
+      top: -70px;
+      width: 115%;
+      background-size: 90vw;
     }
   }
 
   // Smartphonesicht noch kleiner
   @media (max-width: 325px) {
-    margin-top: 5vh;
-
     .btn {
-      width: 48vw;
+      font-size: 10pt;
+      width: 40vw;
     }
-
-    #exit{
-      left: 80vw;
+    .buttonWrapper {
+      position: relative;
+      top: -68px;
+      width: 130%;
+      background-size: 90vw;
     }
   }
-
 }
