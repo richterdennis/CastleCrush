@@ -6,6 +6,9 @@ preload() {
 	this.load.image('cr', 'public/assets/BurgRot.png');
     this.load.spritesheet('rain', 'public/assets/rain.png', 17, 17);
     this.load.image('exit', 'public/assets/exit.png');
+    this.load.image('konfettiRed', 'public/assets/KonfettiRot.png');
+    this.load.image('konfettiBlue', 'public/assets/KonfettiBlau.png');
+    this.load.image('konfettiYellow', 'public/assets/KonfettiGelb.png');
 
 }
 
@@ -32,7 +35,7 @@ create() {
 	this.button = this.add.button(1810, 50, 'exit', this.actionOnClick, this, 2, 1, 0);
 
 	// Gewinner präsentieren, Schatten einstellen
-	this.winnerText = this.add.text(this.world.centerX, this.world.height - 100, this.winner + ' hat gewonnen!', font);
+	this.winnerText = this.add.text(this.world.centerX, this.world.height - 100, this.name + ' hat gewonnen!', font);
 	this.winnerText.setShadow(2, 2, 'rgba(0,0,0,0.8)', 4);
 	this.winnerText.anchor = new Phaser.Point(0.5, 1);
 
@@ -61,13 +64,13 @@ create() {
 
  	// Emitter auf Weltbreite einstellen, Particle aus den Assets laden und Einstellungen festlegen
 	emitter.width = this.world.width;
-	emitter.makeParticles('rain');
-	emitter.minParticleScale = 1;
-	emitter.maxParticleScale = 3;
-	emitter.setYSpeed(5, 25);
-	emitter.setXSpeed(-5, 5);
-	emitter.minRotation = 0;
-	emitter.maxRotation = 0;
+	emitter.makeParticles(['konfettiRed', 'konfettiBlue', 'konfettiYellow']);
+	emitter.minParticleScale = 0.3;
+	emitter.maxParticleScale = 0.3;
+	emitter.setYSpeed(125, 750);
+	emitter.setXSpeed(-125, 125);
+	emitter.minRotation = -90;
+	emitter.maxRotation = 95;
 
 	// Emitter Starten
 	emitter.start(false, 1600, 5, 0);

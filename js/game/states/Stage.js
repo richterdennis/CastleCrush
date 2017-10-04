@@ -309,8 +309,16 @@ export default class Stage extends Phaser.State {
 					EVENTS.GAME_ACTION,
 					this.gameActionListener
 				);
-				if (this.players[0].isAlive()){this.state.states['GameOver'].winner = "Blau"; console.log('Blau');}
-				if (this.players[1].isAlive()){this.state.states['GameOver'].winner = "Rot"; console.log('Rot');}
+				if (this.players[0].isAlive())
+				{
+					this.state.states['GameOver'].winner = "Blau"; console.log('Blau');
+					this.state.states['GameOver'].name = this.players[0].name;
+				}
+				else if (this.players[1].isAlive())
+				{
+					this.state.states['GameOver'].winner = "Rot"; console.log('Rot');
+					this.state.states['GameOver'].name = this.players[1].name;
+				}
 				this.state.start('GameOver', false);
 				break;
 		}
