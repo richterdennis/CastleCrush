@@ -1,5 +1,6 @@
 # config file
-config.json
+config.client.json
+config.server.json
 
 # dist folder
 dist

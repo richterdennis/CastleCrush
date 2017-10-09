@@ -16,14 +16,20 @@ export default class NetworkManager {
 	}
 
 	async init() {
-		this.connect();
+		const config = await fetch('config.client.json').then(r => r.json());
+		this.connect(config);
 	}
 
-	connect() {
+	connect(config) {
 		this.state = 'connecting';
 
+		const connectionAddress =
+			config.server.protocol + '://' +
+			config.server.host + ':' +
+			config.server.port;
+
 		this.connection = io(
-			location.origin,
+			connectionAddress,
 			{ rejectUnauthorized: false }
 		);
 

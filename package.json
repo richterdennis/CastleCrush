@@ -9,6 +9,7 @@
     "server": "node index.js",
 
     "build": "npm run build:html & npm run build:css & npm run build:js & npm run build:public",
+    "postbuild": "ncp config.client.json dist/config.client.json",
     "build:html": "pug index.pug -o dist & pug templates -o dist/templates",
     "build:css": "lessc less/style.less dist/css/style.css",
     "prebuild:js": "mkdirp dist/js",

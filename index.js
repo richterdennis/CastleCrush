@@ -1,5 +1,5 @@
 // Import config
-const config = require('./config.json');
+const config = require('./config.server.json');
 
 // Import modules
 const fs = require('fs');
@@ -10,7 +10,8 @@ const socket = require('socket.io');
 
 // Create static file handler
 const handler = express();
-handler.use(express.static('dist'));
+if(config.static)
+	handler.use(express.static(config.static));
 
 // Create server
 let server = null;

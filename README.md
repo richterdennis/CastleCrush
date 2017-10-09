@@ -1,14 +1,18 @@
 # CastleCrush
 
-*Description follows soon ...*
+CastleCrush is a little Game developed in connection with the [THM](https://www.thm.de/)
 
 ## Setup
 
+### Installation
+Choose the version you are want from the tags. Copy the files in the `_release` folder accordingly to your server and edit the config files.
+
 ### Development
 1. Run `npm install`
-2. Copy `config.sample.json` to `config.json` and edit to your needs
-3. Run `npm start` (synonym for `npm run dev`) or without watch `npm run server` (run `npm run build` for building project)
-4. Start develop
+2. Copy `_sample.config.client.json` to `config.client.json` and edit to your needs
+3. Copy `_sample.config.server.json` to `config.server.json` and edit to your needs
+4. Run `npm start` (synonym for `npm run dev`) or without watch `npm run server` (run `npm run build` for building project)
+5. Start develop
 
 ## NPM Commands
 

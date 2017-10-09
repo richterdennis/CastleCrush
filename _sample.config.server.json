@@ -1,5 +1,6 @@
 {
 	"port": 8080,
+	"static": "dist",
 	"secure": true,
 	"cert": "path/to/ssl.crt/server.crt",
 	"key": "path/to/ssl.key/server.key"
